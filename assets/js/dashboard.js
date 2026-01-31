@@ -48,11 +48,22 @@ window.onload = async () => {
 // --- Helper Functions ---
 
 // 1. Asli Data UI Function
-function updateUI(fullName, username) {
-    document.getElementById("welcomeName").innerText = fullName;
+// Function update karo
+function updateUI(fullName, username, plan) { // 'plan' parameter add kiya
+    let displayName = fullName;
+    
+    // Agar Pro hai to Star lagao
+    if (plan === 'pro') {
+        displayName += " <span style='color:#FFD700; font-size:0.8rem; border:1px solid #FFD700; padding:2px 8px; border-radius:10px; margin-left:5px;'>PRO</span>";
+    }
+
+    document.getElementById("welcomeName").innerHTML = displayName; // innerText ki jagah innerHTML
     document.getElementById("userDisplay").innerText = username;
     document.getElementById("loader").style.display = "none";
 }
+
+// Jahan se ye call ho raha hai (window.onload mein), wahan bhi data pass karo:
+// updateUI(data.user.full_name, data.user.username, data.user.subscription_plan);
 
 // 2. Fake Data Function (Sirf Design ke liye)
 function loadDummyData() {
@@ -130,3 +141,12 @@ async function logout() {
         }
     }
 }
+
+// --- QUIZ START LOGIC ---
+function startQuiz(subject) {
+    console.log("Starting Quiz for:", subject); // Debugging ke liye
+    
+    // User ko Quiz page par bhejo with Subject Parameter
+    // Example: quiz.html?sub=gk
+    window.location.href = `quiz.html?sub=${subject}`;
+} 

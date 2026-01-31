@@ -1,6 +1,16 @@
 const API_BASE = "../api/quiz";
+
+// 1. URL se Subject nikalo (Jo humne dashboard se bheja tha)
 const urlParams = new URLSearchParams(window.location.search);
-const subject = urlParams.get('sub') || 'gk'; // Default GK
+const subject = urlParams.get('sub'); 
+
+console.log("Loaded Subject:", subject); // Console me check karna ye print ho raha hai kya
+
+// Default fallback agar subject na mile
+if (!subject) {
+    alert("No Subject Selected! Redirecting to Dashboard.");
+    window.location.href = "dashboard.html";
+}
 
 let questions = [];
 let currentIndex = 0;

@@ -1,0 +1,272 @@
+[
+    {
+        "id": 1,
+        "q": "Synonym of 'Abundant'?",
+        "a": "Scarce",
+        "b": "Plentiful",
+        "c": "Empty",
+        "d": "Rare",
+        "ans": "b"
+    },
+    {
+        "id": 2,
+        "q": "She ___ working here since 2010.",
+        "a": "is",
+        "b": "was",
+        "c": "has been",
+        "d": "have been",
+        "ans": "c"
+    },
+    {
+        "id": 3,
+        "q": "Antonym of 'Brave'?",
+        "a": "Coward",
+        "b": "Strong",
+        "c": "Bold",
+        "d": "Heroic",
+        "ans": "a"
+    },
+    {
+        "id": 4,
+        "q": "Identify the Verb: 'He runs fast.'",
+        "a": "He",
+        "b": "Runs",
+        "c": "Fast",
+        "d": "None",
+        "ans": "b"
+    },
+    {
+        "id": 5,
+        "q": "Plural of 'Mouse'?",
+        "a": "Mouses",
+        "b": "Mouse",
+        "c": "Mice",
+        "d": "Meese",
+        "ans": "c"
+    },
+    {
+        "id": 6,
+        "q": "Choose the correct sentence.",
+        "a": "She don't like apples.",
+        "b": "She doesn't likes apples.",
+        "c": "She doesn't like apples.",
+        "d": "She not like apples.",
+        "ans": "c"
+    },
+    {
+        "id": 7,
+        "q": "Synonym of 'Quick'?",
+        "a": "Slow",
+        "b": "Fast",
+        "c": "Lazy",
+        "d": "Late",
+        "ans": "b"
+    },
+    {
+        "id": 8,
+        "q": "Fill in the blank: 'They ___ to the market yesterday.'",
+        "a": "go",
+        "b": "went",
+        "c": "gone",
+        "d": "going",
+        "ans": "b"
+    },
+    {
+        "id": 9,
+        "q": "Antonym of 'Difficult'?",
+        "a": "Hard",
+        "b": "Tough",
+        "c": "Easy",
+        "d": "Challenging",
+        "ans": "c"
+    },
+    {
+        "id": 10,
+        "q": "Identify the Adjective: 'The sky is blue.'",
+        "a": "Sky",
+        "b": "Is",
+        "c": "Blue",
+        "d": "The",
+        "ans": "c"
+    },
+    {
+        "id": 11,
+        "q": "Plural of 'Child'?",
+        "a": "Childs",
+        "b": "Children",
+        "c": "Childes",
+        "d": "Childrens",
+        "ans": "b"
+    },
+    {
+        "id": 12,
+        "q": "Choose the correct sentence.",
+        "a": "He are my friend.",
+        "b": "He is my friend.",
+        "c": "He am my friend.",
+        "d": "He be my friend.",
+        "ans": "b"
+    },
+    {
+        "id": 13,
+        "q": "Synonym of 'Happy'?",
+        "a": "Sad",
+        "b": "Joyful",
+        "c": "Angry",
+        "d": "Upset",
+        "ans": "b"
+    },
+    {
+        "id": 14,
+        "q": "Fill in the blank: 'I ___ a book right now.'",
+        "a": "read",
+        "b": "reads",
+        "c": "am reading",
+        "d": "is reading",
+        "ans": "c"
+    },
+    {
+        "id": 15,
+        "q": "Antonym of 'Strong'?",
+        "a": "Powerful",
+        "b": "Weak",
+        "c": "Sturdy",
+        "d": "Robust",
+        "ans": "b"
+    },
+    {
+        "id": 16,
+        "q": "Identify the Noun: 'The cat sleeps on the mat.'",
+        "a": "Sleeps",
+        "b": "On",
+        "c": "Cat",
+        "d": "The",
+        "ans": "c"
+    },
+    {
+        "id": 17,
+        "q": "Plural of 'Foot'?",
+        "a": "Feets",
+        "b": "Foots",
+        "c": "Feet",
+        "d": "Foote",
+        "ans": "c"
+    },
+    {
+        "id": 18,
+        "q": "Choose the correct sentence.",
+        "a": "They is coming to the party.",
+        "b": "They are coming to the party.",
+        "c": "They am coming to the party.",
+        "d": "They be coming to the party.",
+        "ans": "b"
+    },
+    {
+        "id": 19,
+        "q": "Synonym of 'Intelligent'?",
+        "a": "Smart",
+        "b": "Dumb",
+        "c": "Foolish",
+        "d": "Stupid",
+        "ans": "a"
+    },
+    {
+        "id": 20,
+        "q": "Fill in the blank: 'We ___ dinner at 7 PM every day.'",
+        "a": "have",
+        "b": "has",
+        "c": "having",
+        "d": "had",
+        "ans": "a"
+    },
+    {
+        "id": 21,
+        "q": "Antonym of 'Bright'?",
+        "a": "Luminous",
+        "b": "Dull",
+        "c": "Shiny",
+        "d": "Radiant",
+        "ans": "b"
+    },
+    {
+        "id": 22,
+        "q": "Identify the Pronoun: 'She is my sister.'",
+        "a": "She",
+        "b": "Is",
+        "c": "My",
+        "d": "Sister",
+        "ans": "a"
+    },
+    {
+        "id": 23,
+        "q": "Plural of 'Tooth'?",
+        "a": "Tooths",
+        "b": "Teeth",
+        "c": "Toothe",
+        "d": "Teeths",
+        "ans": "b"
+    },
+    {
+        "id": 24,
+        "q": "Choose the correct sentence.",
+        "a": "It don't rain often here.",
+        "b": "It doesn't rain often here.",
+        "c": "It not rains often here.",
+        "d": "It isn't rain often here.",
+        "ans": "b"
+    },
+    {
+        "id": 25,
+        "q": "Synonym of 'Calm'?",
+        "a": "Agitated",
+        "b": "Peaceful",
+        "c": "Nervous",
+        "d": "Anxious",
+        "ans": "b"
+    },
+    {
+        "id": 26,
+        "q": "Fill in the blank: 'He ___ playing football now.'",
+        "a": "is",
+        "b": "are",
+        "c": "am",
+        "d": "be",
+        "ans": "a"
+    },
+    {
+        "id": 27,
+        "q": "Antonym of 'Early'?",
+        "a": "Prompt",
+        "b": "Late",
+        "c": "Timely",
+        "d": "Punctual",
+        "ans": "b"
+    },
+    {
+        "id": 28,
+        "q": "Identify the Adverb: 'She sings beautifully.'",
+        "a": "She",
+        "b": "Sings",
+        "c": "Beautifully",
+        "d": "None",
+        "ans": "c"
+    },
+    {
+        "id": 29,
+        "q": "Plural of 'Leaf'?",
+        "a": "Leafs",
+        "b": "Leaves",
+        "c": "Leafe",
+        "d": "Leafes",
+        "ans": "b"
+    },
+    {
+        "id": 30,
+        "q": "Choose the correct sentence.",
+        "a": "We was happy to see you.",
+        "b": "We were happy to see you.",
+        "c": "We am happy to see you.",
+        "d": "We be happy to see you.",
+        "ans": "b"
+    }
+]
