@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
     <aside class="sidebar" id="sidebar">
@@ -23,11 +25,14 @@
             <a href="#" onclick="logout()" class="nav-item" style="color: #ff4444;">
                 <i class="fa-solid fa-power-off"></i> Logout
             </a>
+            <br> <br>
         </div>
     </aside>
 
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <main class="main-content">
-        
+
         <header class="header">
             <div style="display:flex; align-items:center; gap:15px;">
                 <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
@@ -47,23 +52,26 @@
             <div class="stat-card">
                 <h3>0</h3>
                 <p>Total Points</p>
-                <i class="fa-solid fa-star" style="position:absolute; bottom:20px; right:20px; font-size:2rem; opacity:0.1;"></i>
+                <i class="fa-solid fa-star"
+                    style="position:absolute; bottom:20px; right:20px; font-size:2rem; opacity:0.1;"></i>
             </div>
             <div class="stat-card">
                 <h3>0</h3>
                 <p>Quizzes Played</p>
-                <i class="fa-solid fa-gamepad" style="position:absolute; bottom:20px; right:20px; font-size:2rem; opacity:0.1;"></i>
+                <i class="fa-solid fa-gamepad"
+                    style="position:absolute; bottom:20px; right:20px; font-size:2rem; opacity:0.1;"></i>
             </div>
             <div class="stat-card">
                 <h3>--</h3>
                 <p>Global Rank</p>
-                <i class="fa-solid fa-trophy" style="position:absolute; bottom:20px; right:20px; font-size:2rem; opacity:0.1;"></i>
+                <i class="fa-solid fa-trophy"
+                    style="position:absolute; bottom:20px; right:20px; font-size:2rem; opacity:0.1;"></i>
             </div>
         </div>
 
         <h2 class="section-title">Start Practice</h2>
         <div class="subject-grid">
-            
+
             <div class="subject-card" onclick="startQuiz('english')">
                 <div class="subject-icon" style="color: #ff9f43;">🅰️</div>
                 <h3>English Grammar</h3>
@@ -96,7 +104,9 @@
 
     </main>
 
-    <div style="position:fixed; top:-20%; right:-10%; width:500px; height:500px; background:radial-gradient(circle, rgba(0,255,225,0.08), transparent 70%); border-radius:50%; pointer-events:none; z-index:-1;"></div>
+    <div
+        style="position:fixed; top:-20%; right:-10%; width:500px; height:500px; background:radial-gradient(circle, rgba(0,255,225,0.08), transparent 70%); border-radius:50%; pointer-events:none; z-index:-1;">
+    </div>
 
     <script src="assets/js/dashboard.js"></script>
     <script>
@@ -112,5 +122,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>

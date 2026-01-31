@@ -123,3 +123,23 @@ body {
     .menu-btn { display: block; }
     .main-content { padding: 20px; }
 }
+
+/* --- SIDEBAR OVERLAY (Mobile Fix) --- */
+.sidebar-overlay {
+    display: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Halka kaala background */
+    backdrop-filter: blur(3px);
+    z-index: 999; /* Sidebar (1000) ke neeche */
+}
+
+/* Mobile Responsive Updates */
+@media (max-width: 768px) {
+    .sidebar { position: fixed; left: -310px; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+    .sidebar.active { left: 0; }
+    
+    /* Jab sidebar active ho, tab overlay dikhao */
+    .sidebar.active ~ .sidebar-overlay { display: block; }
+    
+    .menu-btn { display: block; }
+}

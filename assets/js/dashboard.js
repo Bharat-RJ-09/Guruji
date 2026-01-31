@@ -65,6 +65,59 @@ function loadDummyData() {
     document.body.appendChild(msg);
 }
 
+const API_LB = "../api/quiz";
+
+window.onload = () => {
+    loadLeaderboard();
+};
+
+async function loadLeaderboard() {
+    const subject = document.getElementById("subjectFilter").value;
+    const tbody = document.getElementById("lb-body");
+    
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Fetching Data... 🚀</td></tr>`;
+
+    try {
+        const res = await fetch(`${API_LB}/leaderboard.php?subject=${subject}`);
+        const data = await res.json();
+
+        if (data.status === "success" && data.data.length > 0) {
+            tbody.innerHTML = "";
+            let rank = 1;
+
+            data.data.forEach(user => {
+                let rankIcon = `#${rank}`;
+                let rowClass = "";
+
+                if (rank === 1) { rankIcon = "🥇"; rowClass = "rank-1"; }
+                else if (rank === 2) { rankIcon = "🥈"; rowClass = "rank-2"; }
+                else if (rank === 3) { rankIcon = "🥉"; rowClass = "rank-3"; }
+
+                const html = `
+                    <tr>
+                        <td class="${rowClass}" style="font-weight:bold;">${rankIcon}</td>
+                        <td style="text-transform: capitalize;">${user.full_name} <span style="font-size:0.8rem; color:#777;">(@${user.username})</span></td>
+                        <td style="color: #00ffe1; font-weight:bold;">${user.total_score}</td>
+                        <td>${getBadge(user.total_score)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += html;
+                rank++;
+            });
+        } else {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No records found yet. Play a quiz! 🎮</td></tr>`;
+        }
+    } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Server Error ❌</td></tr>`;
+    }
+}
+
+function getBadge(score) {
+    if (score > 50) return "🔥 Expert";
+    if (score > 20) return "🌟 Pro";
+    return "👶 Rookie";
+}
+
 // Logout Function
 async function logout() {
     if(confirm("Are you sure you want to logout?")) {
