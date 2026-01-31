@@ -1,0 +1,9 @@
+# Ignore Config Files (Passwords bachane ke liye)
+config/db.php
+
+# Ignore System Files
+.DS_Store
+Thumbs.db
+
+# Ignore User Uploads (Future ke liye)
+public/uploads/
