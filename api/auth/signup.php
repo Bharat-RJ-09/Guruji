@@ -63,7 +63,7 @@ if($insert->execute()){
     // --- 🚀 SENDGRID EMAIL LOGIC START ---
     
     // 👇 STEP 1: Yahan apni wo Lambi API Key paste karo
-    $apiKey = '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'; 
+    $apiKey = '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'; 
     
     // 👇 STEP 2: Yahan apna SendGrid Verified Email likho
     $senderEmail = 'onehp267@gmail.com'; 

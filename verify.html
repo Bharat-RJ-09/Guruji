@@ -3,42 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify OTP | NextEdu</title>
-    <link rel="stylesheet" href="assets/css/auth.css">
+    <title>Verify Account | NextEdu</title>
+    <style>
+        body { background-color: #05080d; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: rgba(255,255,255,0.05); padding: 30px; border-radius: 15px; border: 1px solid rgba(0,255,225,0.2); text-align: center; width: 300px; }
+        h2 { color: #00ffe1; margin-bottom: 10px; }
+        input { width: 90%; padding: 12px; margin: 15px 0; background: #222; border: 1px solid #444; color: white; text-align: center; font-size: 1.2rem; letter-spacing: 5px; border-radius: 5px; }
+        button { background: #00ffe1; color: black; padding: 12px 20px; border: none; font-weight: bold; cursor: pointer; width: 100%; border-radius: 5px; font-size: 1rem; }
+        button:hover { background: #00e0c6; }
+        .msg { margin-top: 15px; font-size: 0.9rem; }
+    </style>
 </head>
 <body>
-    <div class="glow-bg"></div>
 
-    <div class="auth-card">
-        <h2>Verify Account</h2>
-        <p>Enter the OTP sent to your email 📧</p>
-
-        <div id="msgBox" class="message-box"></div>
-
-        <form id="verifyForm">
-            <input type="hidden" id="email"> 
-            
-            <div class="input-group">
-                <label>Enter OTP</label>
-                <input type="number" id="otp" required placeholder="123456" style="text-align: center; letter-spacing: 5px; font-size: 1.5rem;">
-            </div>
-            
-            <button type="submit" class="btn-primary" id="submitBtn">Verify & Login</button>
-        </form>
-
-        <a href="signup.html" class="auth-link">Wrong Email? <span>Register Again</span></a>
+    <div class="box">
+        <h2>Enter OTP 🔐</h2>
+        <p>Code sent to your email</p>
+        
+        <input type="text" id="email" placeholder="Enter Email" style="letter-spacing: 1px; font-size: 1rem;">
+        <input type="text" id="otp" placeholder="123456" maxlength="6">
+        
+        <button onclick="verifyOTP()">Verify Now</button>
+        <p class="msg" id="message"></p>
     </div>
 
-    <script src="assets/js/auth.js"></script>
     <script>
-        // URL se email utha kar hidden field mein daalo
+        // URL se email automatically utha lo (agar signup se aaye hain)
         const params = new URLSearchParams(window.location.search);
-        const email = params.get("email");
-        if(email) {
-            document.getElementById("email").value = email;
-        } else {
-            alert("No email found! Redirecting to Signup.");
-            window.location.href = "signup.html";
+        if(params.has('email')) {
+            document.getElementById('email').value = params.get('email');
+        }
+
+        async function verifyOTP() {
+            const email = document.getElementById('email').value;
+            const otp = document.getElementById('otp').value;
+            const msg = document.getElementById('message');
+
+            msg.style.color = "yellow";
+            msg.innerText = "Checking...";
+
+            try {
+                const res = await fetch('api/auth/verify_otp.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp })
+                });
+
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    msg.style.color = "#00ffe1";
+                    msg.innerText = "✅ Success! Redirecting...";
+                    setTimeout(() => window.location.href = "public/dashboard.html", 2000);
+                } else {
+                    msg.style.color = "red";
+                    msg.innerText = "❌ " + data.message;
+                }
+            } catch (error) {
+                msg.innerText = "Server Error!";
+            }
         }
     </script>
 </body>

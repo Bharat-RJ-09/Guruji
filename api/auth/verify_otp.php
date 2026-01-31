@@ -1,48 +1,49 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
+error_reporting(0);
+ini_set('display_errors', 0);
+header("Content-Type: application/json");
 
-include_once '../../config/db.php';
+// Database Connect (Path check karlena)
+include '../../config/db.php'; 
+// Agar file bahar hai to: include '../../db.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
-if(!isset($data->email) || !isset($data->otp)){
-    echo json_encode(["status" => "error", "message" => "Email and OTP required."]);
+if (!isset($data->email) || !isset($data->otp)) {
+    echo json_encode(["status" => "error", "message" => "Email and OTP required"]);
     exit;
 }
 
-$email = htmlspecialchars(strip_tags($data->email));
-$otp = htmlspecialchars(strip_tags($data->otp));
-$now = date("Y-m-d H:i:s");
+$email = $data->email;
+$user_otp = $data->otp;
 
-// 1. Check karo OTP sahi hai aur expire nahi hua
-$check_sql = "SELECT id FROM password_resets WHERE email = ? AND token = ? AND expires_at > ?";
-$stmt = $conn->prepare($check_sql);
-$stmt->bind_param("sss", $email, $otp, $now);
+// 1. Check OTP in Database
+$sql = "SELECT id, otp FROM users WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
 $stmt->execute();
-$stmt->store_result();
+$result = $stmt->get_result();
 
-if($stmt->num_rows > 0){
+if ($result->num_rows === 0) {
+    echo json_encode(["status" => "error", "message" => "User not found"]);
+    exit;
+}
+
+$row = $result->fetch_assoc();
+
+// 2. Match OTP
+if ($row['otp'] == $user_otp) {
+    // Sahi hai! Verify kar do (is_verified = 1) aur OTP hata do
+    $update = $conn->prepare("UPDATE users SET is_verified = 1, otp = NULL WHERE email = ?");
+    $update->bind_param("s", $email);
+    $update->execute();
     
-    // 2. User ko Verified mark karo
-    $update_sql = "UPDATE users SET is_verified = 1 WHERE email = ?";
-    $update_stmt = $conn->prepare($update_sql);
-    $update_stmt->bind_param("s", $email);
-    
-    if($update_stmt->execute()){
-        // 3. OTP use ho gaya, ab delete kar do
-        $del_sql = "DELETE FROM password_resets WHERE email = ?";
-        $del_stmt = $conn->prepare($del_sql);
-        $del_stmt->bind_param("s", $email);
-        $del_stmt->execute();
+    // Auto Login ke liye Session Start kar sakte ho yahan (Optional)
+    session_start();
+    $_SESSION['user_id'] = $row['id'];
 
-        echo json_encode(["status" => "success", "message" => "Account Verified! You can now login."]);
-    } else {
-        echo json_encode(["status" => "error", "message" => "Verification failed."]);
-    }
-
+    echo json_encode(["status" => "success", "message" => "Account Verified!"]);
 } else {
-    echo json_encode(["status" => "error", "message" => "Invalid or Expired OTP."]);
+    echo json_encode(["status" => "error", "message" => "Invalid OTP! Try again."]);
 }
 ?>

@@ -1,62 +1,78 @@
 <?php
-// Session Start (Login yaad rakhne ke liye)
+// 1. Session Start (Login yaad rakhne ke liye)
 session_start();
+
+// 2. Error Reporting Off (Clean JSON)
+error_reporting(0);
+ini_set('display_errors', 0);
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 
-include_once '../../config/db.php';
+// 3. Database Connection
+// Path check karlena (agar config folder me hai to ../../config/db.php)
+include '../../config/db.php'; 
 
+// 4. Data Receive
 $data = json_decode(file_get_contents("php://input"));
+if (is_null($data)) {
+    $data = (object) $_POST;
+}
 
-if(!isset($data->login_id) || !isset($data->password)){
-    echo json_encode(["status" => "error", "message" => "Please enter Username/Email and Password."]);
+if(!isset($data->username) || !isset($data->password)){
+    echo json_encode(["status" => "error", "message" => "Username/Email and Password required"]);
     exit;
 }
 
-$login_id = htmlspecialchars(strip_tags($data->login_id)); // Email ya Username
-$password = htmlspecialchars(strip_tags($data->password));
+$userInput = $data->username; // Ye Username ya Email kuch bhi ho sakta hai
+$password = $data->password;
 
-// 1. User dhundo (Email ya Username dono se login allow hai)
-$sql = "SELECT id, full_name, username, email, password_hash, is_verified, role FROM users WHERE email = ? OR username = ?";
+// 5. User Dhoondo (Username YA Email se)
+$sql = "SELECT id, full_name, username, password_hash, is_verified, role FROM users WHERE username = ? OR email = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ss", $login_id, $login_id);
+$stmt->bind_param("ss", $userInput, $userInput);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if($result->num_rows > 0){
-    $row = $result->fetch_assoc();
+if($result->num_rows === 0){
+    echo json_encode(["status" => "error", "message" => "User not found!"]);
+    exit;
+}
 
-    // 2. Check Verification Status
+$row = $result->fetch_assoc();
+
+// 6. Password Match Karo
+if(password_verify($password, $row['password_hash'])){
+    
+    // 7. Check: Kya Account Verified Hai?
     if($row['is_verified'] == 0){
-        echo json_encode(["status" => "error", "message" => "Account not verified! Please verify OTP sent to email."]);
+        echo json_encode([
+            "status" => "error", 
+            "message" => "Account not verified! Please verify OTP first.",
+            "redirect" => "verify.html?email=" . $userInput // Redirect hint
+        ]);
         exit;
     }
 
-    // 3. Verify Password
-    if(password_verify($password, $row['password_hash'])){
-        
-        // 4. Set Session Variables (Server side secure login)
-        $_SESSION['user_id'] = $row['id'];
-        $_SESSION['username'] = $row['username'];
-        $_SESSION['role'] = $row['role'];
+    // ✅ SAB SAHI HAI - SESSION START
+    $_SESSION['user_id'] = $row['id'];
+    $_SESSION['username'] = $row['username'];
+    $_SESSION['full_name'] = $row['full_name'];
+    $_SESSION['role'] = $row['role']; // Admin ya Student
 
-        echo json_encode([
-            "status" => "success", 
-            "message" => "Login Successful!",
-            "redirect" => "dashboard.html",
-            "user" => [
-                "full_name" => $row['full_name'],
-                "role" => $row['role']
-            ]
-        ]);
-
-    } else {
-        echo json_encode(["status" => "error", "message" => "Invalid Password."]);
-    }
+    echo json_encode([
+        "status" => "success", 
+        "message" => "Login Successful!",
+        "user" => [
+            "name" => $row['full_name'],
+            "role" => $row['role']
+        ]
+    ]);
 
 } else {
-    echo json_encode(["status" => "error", "message" => "User not found."]);
+    echo json_encode(["status" => "error", "message" => "Incorrect Password!"]);
 }
+
+$conn->close();
 ?>
