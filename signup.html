@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | NextEdu</title>
+    <link rel="stylesheet" href="assets/css/auth.css">
+</head>
+<body>
+    <div class="glow-bg"></div>
+
+    <div class="auth-card">
+        <h2>Create Account</h2>
+        <p>Join the future of learning 🚀</p>
+
+        <div id="msgBox" class="message-box"></div>
+
+        <form id="signupForm">
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="full_name" required placeholder="Name">
+            </div>
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" required placeholder="username123">
+            </div>
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="email" required placeholder="user@example.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" required placeholder="•••••• (Min 6 chars)">
+            </div>
+            
+            <button type="submit" class="btn-primary" id="submitBtn">Sign Up</button>
+        </form>
+
+        <a href="login.html" class="auth-link">Already have an account? <span>Login</span></a>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+</body>
+</html>

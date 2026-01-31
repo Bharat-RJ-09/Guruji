@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP | NextEdu</title>
+    <link rel="stylesheet" href="assets/css/auth.css">
+</head>
+<body>
+    <div class="glow-bg"></div>
+
+    <div class="auth-card">
+        <h2>Verify Account</h2>
+        <p>Enter the OTP sent to your email 📧</p>
+
+        <div id="msgBox" class="message-box"></div>
+
+        <form id="verifyForm">
+            <input type="hidden" id="email"> 
+            
+            <div class="input-group">
+                <label>Enter OTP</label>
+                <input type="number" id="otp" required placeholder="123456" style="text-align: center; letter-spacing: 5px; font-size: 1.5rem;">
+            </div>
+            
+            <button type="submit" class="btn-primary" id="submitBtn">Verify & Login</button>
+        </form>
+
+        <a href="signup.html" class="auth-link">Wrong Email? <span>Register Again</span></a>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script>
+        // URL se email utha kar hidden field mein daalo
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get("email");
+        if(email) {
+            document.getElementById("email").value = email;
+        } else {
+            alert("No email found! Redirecting to Signup.");
+            window.location.href = "signup.html";
+        }
+    </script>
+</body>
+</html>
