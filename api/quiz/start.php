@@ -1,9 +1,10 @@
 <?php
 session_start();
+// CORS Error hatane ke liye
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
-// Login Check
+// Agar login nahi hai to error do
 if(!isset($_SESSION['user_id'])){
     http_response_code(401);
     echo json_encode(["status" => "error", "message" => "Please Login First."]);
@@ -12,8 +13,7 @@ if(!isset($_SESSION['user_id'])){
 
 $subject = isset($_GET['subject']) ? $_GET['subject'] : 'english';
 
-// 1. JSON File ka path dhundo
-// Filhal sirf english ke liye set kar rahe hain, baaki subjects ke liye alag files bana lena
+// File Path (Dhyan se check karna folder structure)
 $json_file = "../data/" . $subject . ".json";
 
 if (!file_exists($json_file)) {
@@ -21,22 +21,25 @@ if (!file_exists($json_file)) {
     exit;
 }
 
-// 2. File Read karo
+// File Read
 $json_data = file_get_contents($json_file);
 $all_questions = json_decode($json_data, true);
 
-// 3. Shuffle karo (Taaki har baar naye sawal aayein)
-shuffle($all_questions);
+if (!$all_questions) {
+    echo json_encode(["status" => "error", "message" => "Invalid JSON format"]);
+    exit;
+}
 
-// 4. Pehle 10 sawal nikalo
+// Shuffle & Select 10
+shuffle($all_questions);
 $selected_questions = array_slice($all_questions, 0, 10);
 
-// 5. IMPORTANT: Answer key hata do (Security 🔒)
+// Answers Hatao (Security)
 $frontend_questions = [];
 foreach ($selected_questions as $q) {
     $frontend_questions[] = [
         "id" => $q['id'],
-        "question_text" => $q['q'], // Frontend wale naam se map kiya
+        "question_text" => $q['q'],
         "option_a" => $q['a'],
         "option_b" => $q['b'],
         "option_c" => $q['c'],

@@ -7,15 +7,15 @@ window.onload = async () => {
 
     try {
         const res = await fetch(`${API_SECURE}/profile.php`);
-        
+
         // Agar Server bole "Login nahi hai" (401 Error)
         if (res.status === 401) {
-            
+
             // ✅ BYPASS: Agar Localhost hai, to Login page par mat bhejo!
             if (isLocalhost) {
                 console.warn("⚠️ DEV MODE: Bypassing Login Check for Localhost");
                 loadDummyData(); // Fake data load karo
-                return; 
+                return;
             }
 
             // Agar Live Server hai, to Login page par bhejo
@@ -36,9 +36,9 @@ window.onload = async () => {
     } catch (error) {
         console.error("Dashboard Error:", error);
         // Agar PHP server band hai, tab bhi localhost pe dashboard dikhao
-        if (isLocalhost) { 
+        if (isLocalhost) {
             console.warn("⚠️ Server Error: Loading Dummy Data");
-            loadDummyData(); 
+            loadDummyData();
         } else {
             window.location.href = "login.html";
         }
@@ -51,7 +51,7 @@ window.onload = async () => {
 // Function update karo
 function updateUI(fullName, username, plan) { // 'plan' parameter add kiya
     let displayName = fullName;
-    
+
     // Agar Pro hai to Star lagao
     if (plan === 'pro') {
         displayName += " <span style='color:#FFD700; font-size:0.8rem; border:1px solid #FFD700; padding:2px 8px; border-radius:10px; margin-left:5px;'>PRO</span>";
@@ -68,7 +68,7 @@ function updateUI(fullName, username, plan) { // 'plan' parameter add kiya
 // 2. Fake Data Function (Sirf Design ke liye)
 function loadDummyData() {
     updateUI("Developer Bhai", "dev_admin");
-    
+
     // Toast notification dikhao ki ye Dev Mode hai
     const msg = document.createElement("div");
     msg.innerText = "🛠️ Developer Mode: Login Bypassed";
@@ -85,7 +85,7 @@ window.onload = () => {
 async function loadLeaderboard() {
     const subject = document.getElementById("subjectFilter").value;
     const tbody = document.getElementById("lb-body");
-    
+
     tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Fetching Data... 🚀</td></tr>`;
 
     try {
@@ -115,6 +115,35 @@ async function loadLeaderboard() {
                 tbody.innerHTML += html;
                 rank++;
             });
+
+            if (data.status === "success") {
+                updateUI(data.user.full_name, data.user.username, data.user.subscription_plan);
+
+                // 👇 YE NAYI LINE JODO: Stats bhi load karo
+                loadStats();
+                // --- LOAD REAL STATS ---
+async function loadStats() {
+    try {
+        const res = await fetch('../api/secure/stats.php');
+        const data = await res.json();
+
+        if (data.status === "success") {
+            // HTML me IDs dhoondh kar update karo
+            // Note: HTML me IDs add karni padengi (Step 3 dekho)
+            if(document.getElementById("stat-score")) 
+                document.getElementById("stat-score").innerText = data.stats.score;
+            
+            if(document.getElementById("stat-played")) 
+                document.getElementById("stat-played").innerText = data.stats.played;
+            
+            if(document.getElementById("stat-rank")) 
+                document.getElementById("stat-rank").innerText = "#" + data.stats.rank;
+        }
+    } catch (error) {
+        console.error("Stats Error:", error);
+    }
+}
+            }
         } else {
             tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No records found yet. Play a quiz! 🎮</td></tr>`;
         }
@@ -131,7 +160,7 @@ function getBadge(score) {
 
 // Logout Function
 async function logout() {
-    if(confirm("Are you sure you want to logout?")) {
+    if (confirm("Are you sure you want to logout?")) {
         try {
             await fetch(`${API_AUTH}/logout.php`);
             localStorage.clear();
@@ -145,8 +174,10 @@ async function logout() {
 // --- QUIZ START LOGIC ---
 function startQuiz(subject) {
     console.log("Starting Quiz for:", subject); // Debugging ke liye
-    
+
     // User ko Quiz page par bhejo with Subject Parameter
     // Example: quiz.html?sub=gk
     window.location.href = `quiz.html?sub=${subject}`;
-} 
+}
+
+ 
