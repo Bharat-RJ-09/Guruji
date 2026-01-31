@@ -99,3 +99,46 @@ if (verifyForm) {
         }
     });
 }
+
+// --- 3. LOGIN LOGIC ---
+const loginForm = document.getElementById("loginForm");
+if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        setLoading("submitBtn", true);
+
+        const data = {
+            login_id: document.getElementById("login_id").value,
+            password: document.getElementById("password").value
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/login.php`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if (result.status === "success") {
+                showMessage("success", "Login Successful! Redirecting...");
+                
+                // User info local storage me save kar lo (Optional, sirf UI dikhane ke liye)
+                localStorage.setItem("user_name", result.user.full_name);
+                localStorage.setItem("user_role", result.user.role);
+
+                setTimeout(() => {
+                    window.location.href = result.redirect; // Dashboard pe bhej do
+                }, 1000);
+            } else {
+                showMessage("error", result.message);
+                setLoading("submitBtn", false);
+            }
+        } catch (error) {
+            console.error(error);
+            showMessage("error", "Server Error. Try again.");
+            setLoading("submitBtn", false);
+        }
+    });
+}
