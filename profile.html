@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | NextEdu</title>
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Profile Specific CSS */
+        .profile-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+        }
+        .profile-card {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px; border-radius: 20px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #b0bec5; margin-bottom: 8px; font-size: 0.9rem; }
+        .form-inp {
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; outline: none;
+        }
+        .form-inp:focus { border-color: var(--neon-blue); }
+        .btn-save {
+            background: var(--neon-blue); color: #000; padding: 10px 20px; border: none;
+            border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%;
+        }
+
+        /* Subscription Card (Golden Theme) */
+        .sub-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(0,0,0,0));
+            border: 1px solid rgba(255, 215, 0, 0.3); text-align: center;
+        }
+        .plan-badge {
+            background: rgba(255, 255, 255, 0.1); padding: 5px 15px; border-radius: 20px;
+            font-size: 0.8rem; letter-spacing: 1px;
+        }
+        .pro-features li { text-align: left; margin: 10px 0; color: #ccc; list-style: none; }
+        .pro-features i { color: #FFD700; margin-right: 10px; }
+
+        @media (max-width: 768px) { .profile-container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span></div>
+        <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="leaderboard.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+        <a href="#" class="nav-item active"><i class="fa-solid fa-user-gear"></i> Profile</a>
+        <a href="#" class="nav-item" onclick="logout()" style="color: #ff4444;"><i class="fa-solid fa-power-off"></i> Logout</a>
+    </aside>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <main class="main-content">
+        <header class="header">
+            <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <div class="welcome">
+                <h1>Account Settings</h1>
+                <p>Manage your profile & subscription</p>
+            </div>
+        </header>
+
+        <div class="profile-container">
+            
+            <div class="profile-card">
+                <h3 style="margin-top:0; color:var(--neon-blue);"><i class="fa-solid fa-pen-to-square"></i> Personal Info</h3>
+                
+                <div class="form-group">
+                    <label>Username (Cannot Change)</label>
+                    <input type="text" id="p_username" class="form-inp" disabled style="opacity: 0.5;">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="p_fullname" class="form-inp">
+                </div>
+                <button class="btn-save" onclick="updateProfile()">Save Changes</button>
+
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:30px 0;">
+
+                <h3 style="color:var(--neon-purple);"><i class="fa-solid fa-lock"></i> Security</h3>
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="curr_pass" class="form-inp" placeholder="Enter old password">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="new_pass" class="form-inp" placeholder="Min 6 characters">
+                </div>
+                <button class="btn-save" style="background:var(--neon-purple); color:#fff;" onclick="changePassword()">Update Password</button>
+            </div>
+
+            <div class="profile-card sub-card">
+                <div style="font-size:3rem; margin-bottom:10px;">💎</div>
+                <h2 id="plan_name" style="color:#FFD700; margin:0;">Free Plan</h2>
+                <p style="color:#aaa;">Current Status</p>
+
+                <div style="text-align:left; background:rgba(0,0,0,0.3); padding:20px; border-radius:15px; margin:20px 0;">
+                    <ul class="pro-features">
+                        <li><i class="fa-solid fa-check"></i> Access to Free Quizzes</li>
+                        <li><i class="fa-solid fa-check"></i> Basic Leaderboard</li>
+                        <li style="opacity:0.5;"><i class="fa-solid fa-lock"></i> Detailed Analysis (Pro)</li>
+                        <li style="opacity:0.5;"><i class="fa-solid fa-lock"></i> Ad-free Experience (Pro)</li>
+                    </ul>
+                </div>
+
+                <button class="btn-save" style="background: linear-gradient(45deg, #FFD700, #FFA500); color:#000;" onclick="upgradePlan()">
+                    🚀 Upgrade to PRO
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="assets/js/dashboard.js"></script> <script src="assets/js/profile.js"></script>
+    <script>
+        function toggleSidebar() { document.getElementById("sidebar").classList.toggle("active"); }
+    </script>
+</body>
+</html>
