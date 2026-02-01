@@ -1,24 +1,23 @@
+// assets/js/quiz.js
+
 const API_BASE = "api/quiz";
 
-// 1. URL se Subject nikalo (Jo humne dashboard se bheja tha)
+// 1. Get Subject from URL
 const urlParams = new URLSearchParams(window.location.search);
 const subject = urlParams.get('sub'); 
 
-console.log("Loaded Subject:", subject); // Console me check karna ye print ho raha hai kya
-
-// Default fallback agar subject na mile
 if (!subject) {
-    alert("No Subject Selected! Redirecting to Dashboard.");
+    alert("No Subject Selected! Redirecting...");
     window.location.href = "dashboard.html";
 }
 
 let questions = [];
 let currentIndex = 0;
-let userAnswers = {}; // { q_id: 'a', q_id: 'b' }
+let userAnswers = {}; 
 let timerInterval;
 let timeLeft = 45;
 
-// 1. Start Quiz
+// 2. Start Quiz
 window.onload = async () => {
     try {
         const res = await fetch(`${API_BASE}/start.php?subject=${subject}`);
@@ -33,42 +32,38 @@ window.onload = async () => {
             loadQuestion();
             startTimer();
         } else {
-            alert("No questions found for this subject!");
+            alert(data.message || "No questions found!");
             window.location.href = "dashboard.html";
         }
     } catch (e) {
         console.error(e);
-        alert("Error loading quiz.");
+        alert("Server Error: Check Console");
     }
 };
 
-// 2. Load Single Question
+// 3. Load Question
 function loadQuestion() {
     const q = questions[currentIndex];
     document.getElementById("current-q").innerText = currentIndex + 1;
     document.getElementById("question-text").innerText = q.question_text;
     
-    // Reset Buttons
     ['a','b','c','d'].forEach(opt => {
         const btn = document.getElementById(`btn-${opt}`);
         btn.innerText = q[`option_${opt}`];
         btn.classList.remove("selected");
-        // Agar pehle select kiya tha to highlight karo
         if(userAnswers[q.id] === opt) btn.classList.add("selected");
     });
 }
 
-// 3. Option Selection
+// 4. Select Option
 window.selectOption = (opt) => {
     const qId = questions[currentIndex].id;
     userAnswers[qId] = opt;
-    
-    // UI Update
     ['a','b','c','d'].forEach(o => document.getElementById(`btn-${o}`).classList.remove("selected"));
     document.getElementById(`btn-${opt}`).classList.add("selected");
 };
 
-// 4. Next / Submit
+// 5. Next Button
 window.nextQuestion = () => {
     if(currentIndex < questions.length - 1) {
         currentIndex++;
@@ -78,10 +73,10 @@ window.nextQuestion = () => {
     }
 };
 
-// 5. Submit Logic
+// 6. Submit Logic (Fixed)
 async function submitQuiz() {
     clearInterval(timerInterval);
-    document.getElementById("quiz-area").innerHTML = "<h2>Submitting... 🔄</h2>";
+    document.getElementById("quiz-area").innerHTML = "<h2 style='color:#fff;'>Submitting Score... 🔄</h2>";
 
     const payload = {
         subject: subject,
@@ -91,29 +86,44 @@ async function submitQuiz() {
     try {
         const res = await fetch(`${API_BASE}/submit.php`, {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
+        
         const result = await res.json();
         
         if(result.status === "success") {
             document.getElementById("quiz-area").innerHTML = `
-                <h1>🎉 Quiz Completed!</h1>
-                <h2 style="font-size:3rem; color:#00ffe1;">${result.score} / ${result.total}</h2>
-                <button class="btn-control btn-next" onclick="location.href='dashboard.html'">Back to Dashboard</button>
+                <h1 style="color:#00ffe1;">🎉 Quiz Completed!</h1>
+                <h2 style="font-size:3rem; color:#fff;">${result.score} / ${result.total}</h2>
+                <p style="color:#aaa;">Score saved successfully</p>
+                <button class="btn-control btn-next" onclick="location.href='dashboard.html'" style="margin-top:20px;">Back to Dashboard</button>
+            `;
+        } else {
+            document.getElementById("quiz-area").innerHTML = `
+                <h2 style="color:red;">❌ Submission Failed</h2>
+                <p>${result.message}</p>
+                <button class="btn-control" onclick="location.href='dashboard.html'">Go Back</button>
             `;
         }
     } catch (e) {
-        alert("Submission Failed");
+        console.error(e);
+        document.getElementById("quiz-area").innerHTML = `
+            <h2 style="color:red;">⚠️ Server Error</h2>
+            <p>Could not save score. Check console.</p>
+            <button class="btn-control" onclick="location.href='dashboard.html'">Go Back</button>
+        `;
     }
 }
 
-// 6. Timer
+// 7. Timer
 function startTimer() {
     timerInterval = setInterval(() => {
         timeLeft--;
         const min = Math.floor(timeLeft / 60);
         const sec = timeLeft % 60;
-        document.getElementById("timer").innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
+        const timerEl = document.getElementById("timer");
+        if(timerEl) timerEl.innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
         
         if(timeLeft <= 0) {
             clearInterval(timerInterval);
@@ -126,5 +136,3 @@ function startTimer() {
 window.quitQuiz = () => {
     if(confirm("Quit Quiz? Progress will be lost.")) location.href = "dashboard.html";
 };
-
- 

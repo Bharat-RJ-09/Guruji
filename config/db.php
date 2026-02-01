@@ -1,19 +1,27 @@
 <?php
-// 1. Database Credentials (InfinityFree wale)
-$servername = "sql300.infinityfree.com"; 
-$username = "if0_38529899";
-$password = "Xe4JJvRKGhz";
-$dbname = "if0_38529899_nextedu_db"; // ⚠️ Check karlena CPanel me yahi naam hai na?
+// config/db.php
 
-// 2. Connection Banao
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// 3. Check Connection
-if ($conn->connect_error) {
-    // Agar fail ho jaye to error dikhao aur rook jao
-    die("Connection failed: " . $conn->connect_error);
+// 1. Detect Environment
+if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '127.0.0.1') {
+    // 🏠 LOCALHOST (XAMPP)
+    $servername = "localhost";
+    $username = "root";
+    $password = ""; // XAMPP default is empty
+    $dbname = "nextedu_db"; 
+} else {
+    // 🌐 LIVE SERVER (InfinityFree)
+    $servername = "sql300.infinityfree.com"; 
+    $username = "if0_38529899";
+    $password = "Xe4JJvRKGhz";
+    $dbname = "if0_38529899_nextedu_db"; 
 }
 
-// Agar connection successful hai to kuch mat bolo (chupchap kaam karo),
-// taaki ye file doosri files me include ho sake bina error diye.
+// 2. Connect
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// 3. Handle Connection Error (JSON format)
+if ($conn->connect_error) {
+    header("Content-Type: application/json");
+    die(json_encode(["status" => "error", "message" => "Database Connection Failed: " . $conn->connect_error]));
+}
 ?>

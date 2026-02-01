@@ -1,23 +1,24 @@
-// Base API URL (Apne hisab se adjust karna agar folder structure alag ho)
-const API_BASE = "../api/auth"; 
+// assets/js/auth.js
+
+const API_BASE = "api/auth"; 
 
 // --- Helper Functions ---
 function showMessage(type, text) {
     const box = document.getElementById("msgBox");
-    box.className = `message-box ${type}`;
-    box.innerText = text;
-    box.style.display = "block";
+    if (box) {
+        box.className = `message-box ${type}`;
+        box.innerText = text;
+        box.style.display = "block";
+    } else {
+        alert(text);
+    }
 }
 
 function setLoading(btnId, isLoading) {
     const btn = document.getElementById(btnId);
-    if(isLoading) {
-        btn.disabled = true;
-        btn.innerText = "Processing...";
-    } else {
-        btn.disabled = false;
-        btn.innerText = "Submit";
-    }
+    if (!btn) return;
+    btn.disabled = isLoading;
+    btn.innerText = isLoading ? "Processing..." : "Submit";
 }
 
 // --- 1. SIGNUP LOGIC ---
@@ -35,7 +36,7 @@ if (signupForm) {
         };
 
         try {
-            const res = await fetch(`${API_BASE}/register.php`, {
+            const res = await fetch(`${API_BASE}/signup.php`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
@@ -44,61 +45,31 @@ if (signupForm) {
             const result = await res.json();
 
             if (result.status === "success") {
+                // 🛠️ DEV MODE FEATURE: Show OTP instantly on screen!
+                if(result.debug_otp) {
+                    alert("📢 DEVELOPER OTP: " + result.debug_otp);
+                }
+
                 showMessage("success", "Success! Redirecting to verify...");
-                // Testing ke liye console mein OTP dikhega (Debug Mode)
-                if(result.debug_otp) console.log("Debug OTP:", result.debug_otp);
                 
                 setTimeout(() => {
                     window.location.href = `verify.html?email=${encodeURIComponent(data.email)}`;
-                }, 1500);
+                }, 1000);
             } else {
                 showMessage("error", result.message);
                 setLoading("submitBtn", false);
             }
         } catch (error) {
             console.error(error);
-            showMessage("error", "Server Error. Try again later.");
+            showMessage("error", "Server Error. Check Console.");
             setLoading("submitBtn", false);
         }
     });
 }
 
 // --- 2. VERIFY LOGIC ---
-const verifyForm = document.getElementById("verifyForm");
-if (verifyForm) {
-    verifyForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        setLoading("submitBtn", true);
-
-        const data = {
-            email: document.getElementById("email").value,
-            otp: document.getElementById("otp").value
-        };
-
-        try {
-            const res = await fetch(`${API_BASE}/verify_otp.php`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-
-            const result = await res.json();
-
-            if (result.status === "success") {
-                showMessage("success", "Verified! Redirecting to login...");
-                setTimeout(() => {
-                    window.location.href = "login.html"; // Agle step mein banayenge
-                }, 1500);
-            } else {
-                showMessage("error", result.message);
-                setLoading("submitBtn", false);
-            }
-        } catch (error) {
-            showMessage("error", "Server Error.");
-            setLoading("submitBtn", false);
-        }
-    });
-}
+// (Already inside verify.html script tag usually, but if separated:)
+// ... verify logic ...
 
 // --- 3. LOGIN LOGIC ---
 const loginForm = document.getElementById("loginForm");
@@ -108,7 +79,7 @@ if (loginForm) {
         setLoading("submitBtn", true);
 
         const data = {
-            login_id: document.getElementById("login_id").value,
+            username: document.getElementById("login_id").value,
             password: document.getElementById("password").value
         };
 
@@ -123,21 +94,19 @@ if (loginForm) {
 
             if (result.status === "success") {
                 showMessage("success", "Login Successful! Redirecting...");
-                
-                // User info local storage me save kar lo (Optional, sirf UI dikhane ke liye)
-                localStorage.setItem("user_name", result.user.full_name);
-                localStorage.setItem("user_role", result.user.role);
-
                 setTimeout(() => {
-                    window.location.href = result.redirect; // Dashboard pe bhej do
+                    window.location.href = "dashboard.html"; 
                 }, 1000);
             } else {
                 showMessage("error", result.message);
+                if(result.redirect) {
+                    setTimeout(() => { window.location.href = result.redirect; }, 2000);
+                }
                 setLoading("submitBtn", false);
             }
         } catch (error) {
             console.error(error);
-            showMessage("error", "Server Error. Try again.");
+            showMessage("error", "Server Error.");
             setLoading("submitBtn", false);
         }
     });

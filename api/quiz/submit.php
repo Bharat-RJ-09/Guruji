@@ -1,48 +1,78 @@
 <?php
-session_start();
-header("Content-Type: application/json");
-include_once '../../config/db.php'; // DB connection chahiye Score save karne ke liye
+// api/quiz/submit.php
 
+// 1. Silent Errors (JSON fix)
+error_reporting(0);
+ini_set('display_errors', 0);
+
+session_start();
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+
+// 2. DB Connection
+if (!file_exists('../../config/db.php')) {
+    echo json_encode(["status" => "error", "message" => "DB Config Missing"]);
+    exit;
+}
+include '../../config/db.php';
+
+// 3. Login Check
 if(!isset($_SESSION['user_id'])){
     echo json_encode(["status" => "error", "message" => "Login Required"]);
     exit;
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
+// 4. Receive Data
+$input = file_get_contents("php://input");
+$data = json_decode($input, true);
+
+if (!isset($data['subject']) || !isset($data['answers'])) {
+    echo json_encode(["status" => "error", "message" => "Invalid Data Received"]);
+    exit;
+}
+
 $user_id = $_SESSION['user_id'];
 $subject = $data['subject'];
 $user_answers = $data['answers'];
 
-// 1. JSON File Read karo
+// 5. Load Questions
 $json_file = "../data/" . $subject . ".json";
 if (!file_exists($json_file)) {
-    echo json_encode(["status" => "error", "message" => "Server Error: Data missing"]);
+    echo json_encode(["status" => "error", "message" => "Subject Data Not Found"]);
     exit;
 }
 
-$json_data = file_get_contents($json_file);
-$all_questions = json_decode($json_data, true);
+$all_questions = json_decode(file_get_contents($json_file), true);
+if (!$all_questions) {
+    echo json_encode(["status" => "error", "message" => "Question File Corrupted"]);
+    exit;
+}
 
-// 2. Questions ko ID ke hisab se map kar lo (Fast checking ke liye)
+// 6. Map Answers (ID => Answer)
 $question_map = [];
 foreach ($all_questions as $q) {
     $question_map[$q['id']] = $q['ans'];
 }
 
-// 3. Score Calculate karo
+// 7. Calculate Score
 $score = 0;
 $total = count($user_answers);
 
 foreach($user_answers as $q_id => $selected_opt) {
-    // Check karo kya ye ID map mein hai aur answer sahi hai?
     if (isset($question_map[$q_id]) && $question_map[$q_id] === $selected_opt) {
         $score++;
     }
 }
 
-// 4. Score Database mein Save karo (History Table)
+// 8. Save to DB
 $save_sql = "INSERT INTO quiz_history (user_id, subject, score, total_questions) VALUES (?, ?, ?, ?)";
 $stmt = $conn->prepare($save_sql);
+
+if (!$stmt) {
+    echo json_encode(["status" => "error", "message" => "DB Prepare Failed: " . $conn->error]);
+    exit;
+}
+
 $stmt->bind_param("isii", $user_id, $subject, $score, $total);
 
 if($stmt->execute()){
@@ -50,9 +80,11 @@ if($stmt->execute()){
         "status" => "success", 
         "score" => $score, 
         "total" => $total,
-        "message" => "Quiz Submitted! You scored $score/$total"
+        "message" => "Quiz Submitted Successfully!"
     ]);
 } else {
-    echo json_encode(["status" => "error", "message" => "Failed to save score"]);
+    echo json_encode(["status" => "error", "message" => "DB Save Failed: " . $stmt->error]);
 }
+
+$conn->close();
 ?>

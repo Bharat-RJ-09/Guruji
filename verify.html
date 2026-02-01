@@ -28,7 +28,7 @@
     </div>
 
     <script>
-        // URL se email automatically utha lo (agar signup se aaye hain)
+        // Auto-fill email from URL
         const params = new URLSearchParams(window.location.search);
         if(params.has('email')) {
             document.getElementById('email').value = params.get('email');
@@ -43,26 +43,27 @@
             msg.innerText = "Checking...";
 
             try {
-                const res = await fetch('api/auth/verify_otp.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, otp })
-                });
-
-                const data = await res.json();
-                
-                if (data.status === 'success') {
-                    msg.style.color = "#00ffe1";
-                    msg.innerText = "✅ Success! Redirecting...";
-                    setTimeout(() => window.location.href = "public/dashboard.html", 2000);
-                } else {
-                    msg.style.color = "red";
-                    msg.innerText = "❌ " + data.message;
-                }
-            } catch (error) {
-                msg.innerText = "Server Error!";
+            const res = await fetch('api/auth/verify_otp.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp })
+            });
+            const data = await res.json();
+            
+            if (data.status === 'success') {
+                msg.style.color = "#00ffe1";
+                msg.innerText = "✅ Success! Redirecting...";
+                // Redirect to Dashboard directly
+                setTimeout(() => window.location.href = "dashboard.html", 1500);
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "❌ " + data.message;
             }
+        } catch (error) {
+            msg.innerText = "Server Error!";
         }
+    }
+        
     </script>
 </body>
 </html>

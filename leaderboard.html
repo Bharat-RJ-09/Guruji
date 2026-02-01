@@ -15,14 +15,14 @@
         tr:hover { background: rgba(255,255,255,0.02); }
         
         /* Rank Badges */
-        .rank-1 { color: #FFD700; font-size: 1.2rem; } /* Gold */
-        .rank-2 { color: #C0C0C0; font-size: 1.1rem; } /* Silver */
-        .rank-3 { color: #CD7F32; font-size: 1.1rem; } /* Bronze */
+        .rank-1 { color: #FFD700; font-size: 1.2rem; } 
+        .rank-2 { color: #C0C0C0; font-size: 1.1rem; } 
+        .rank-3 { color: #CD7F32; font-size: 1.1rem; } 
 
         /* Filter Dropdown */
         .filter-select {
             padding: 10px; background: #000; color: #fff; border: 1px solid var(--neon-blue);
-            border-radius: 8px; margin-bottom: 20px; outline: none;
+            border-radius: 8px; margin-bottom: 20px; outline: none; width: 100%; max-width: 300px;
         }
     </style>
 </head>
@@ -57,10 +57,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Rank</th>
-                        <th>Student</th>
-                        <th>Score</th>
-                        <th>Badge</th>
+                        <th width="10%">Rank</th>
+                        <th width="50%">Student</th>
+                        <th width="20%">Score</th>
+                        <th width="20%">Badge</th>
                     </tr>
                 </thead>
                 <tbody id="lb-body">
@@ -70,7 +70,8 @@
         </div>
     </main>
 
-    <script src="assets/js/dashboard.js"></script> <script src="assets/js/leaderboard.js"></script>
+    <script src="assets/js/dashboard.js"></script> 
+    
     <script>
         function toggleSidebar() { document.getElementById("sidebar").classList.toggle("active"); }
     </script>
