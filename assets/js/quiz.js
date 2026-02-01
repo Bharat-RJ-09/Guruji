@@ -21,7 +21,7 @@ let timeLeft = 45;
 // 1. Start Quiz
 window.onload = async () => {
     try {
-        const res = await fetch(`${API_BASE}/start.php?subject=${subject}`);
+        const res = await fetch('/api/quiz/start.php?subject=' + subject);
         const data = await res.json();
         
         if(data.status === "success" && data.data.length > 0) {
@@ -126,3 +126,6 @@ function startTimer() {
 window.quitQuiz = () => {
     if(confirm("Quit Quiz? Progress will be lost.")) location.href = "dashboard.html";
 };
+
+
+start.php
