@@ -1,4 +1,4 @@
-const API_BASE = "../api/quiz";
+const API_BASE = "api/quiz";
 
 // 1. URL se Subject nikalo (Jo humne dashboard se bheja tha)
 const urlParams = new URLSearchParams(window.location.search);
@@ -21,7 +21,7 @@ let timeLeft = 45;
 // 1. Start Quiz
 window.onload = async () => {
     try {
-        const res = await fetch('/api/quiz/start.php?subject=' + subject);
+        const res = await fetch(`${API_BASE}/start.php?subject=${subject}`);
         const data = await res.json();
         
         if(data.status === "success" && data.data.length > 0) {
@@ -127,5 +127,4 @@ window.quitQuiz = () => {
     if(confirm("Quit Quiz? Progress will be lost.")) location.href = "dashboard.html";
 };
 
-
-start.php
+ 
