@@ -1,13 +1,13 @@
 // assets/js/quiz.js
 
-const API_BASE = "api/quiz";
+const API_BASE = "api/quiz"; 
 
-// 1. Get Subject from URL
+// 1. Get Subject
 const urlParams = new URLSearchParams(window.location.search);
 const subject = urlParams.get('sub'); 
 
 if (!subject) {
-    alert("No Subject Selected! Redirecting...");
+    alert("No Subject Selected!");
     window.location.href = "dashboard.html";
 }
 
@@ -15,7 +15,7 @@ let questions = [];
 let currentIndex = 0;
 let userAnswers = {}; 
 let timerInterval;
-let timeLeft = 45;
+let startTime; // Store when quiz started
 
 // 2. Start Quiz
 window.onload = async () => {
@@ -29,15 +29,16 @@ window.onload = async () => {
             document.getElementById("loader").style.display = "none";
             document.getElementById("quiz-area").style.display = "block";
             
+            // Start Clock
+            startTime = Date.now(); 
+            startTimer(); 
             loadQuestion();
-            startTimer();
         } else {
             alert(data.message || "No questions found!");
             window.location.href = "dashboard.html";
         }
     } catch (e) {
         console.error(e);
-        alert("Server Error: Check Console");
     }
 };
 
@@ -50,7 +51,7 @@ function loadQuestion() {
     ['a','b','c','d'].forEach(opt => {
         const btn = document.getElementById(`btn-${opt}`);
         btn.innerText = q[`option_${opt}`];
-        btn.classList.remove("selected");
+        btn.className = "option-btn"; // Reset classes
         if(userAnswers[q.id] === opt) btn.classList.add("selected");
     });
 }
@@ -73,14 +74,20 @@ window.nextQuestion = () => {
     }
 };
 
-// 6. Submit Logic (Fixed)
+// 6. Submit Logic (With Time Calculation)
 async function submitQuiz() {
     clearInterval(timerInterval);
+    
+    // Calculate Time Taken in Seconds
+    const endTime = Date.now();
+    const timeTakenSeconds = Math.floor((endTime - startTime) / 1000);
+
     document.getElementById("quiz-area").innerHTML = "<h2 style='color:#fff;'>Submitting Score... 🔄</h2>";
 
     const payload = {
         subject: subject,
-        answers: userAnswers
+        answers: userAnswers,
+        time_taken: timeTakenSeconds // ✅ Sending time to backend
     };
 
     try {
@@ -94,45 +101,51 @@ async function submitQuiz() {
         
         if(result.status === "success") {
             document.getElementById("quiz-area").innerHTML = `
-                <h1 style="color:#00ffe1;">🎉 Quiz Completed!</h1>
-                <h2 style="font-size:3rem; color:#fff;">${result.score} / ${result.total}</h2>
-                <p style="color:#aaa;">Score saved successfully</p>
-                <button class="btn-control btn-next" onclick="location.href='dashboard.html'" style="margin-top:20px;">Back to Dashboard</button>
+                <div style="text-align:center;">
+                    <h1 style="color:#00ffe1;">🎉 Quiz Completed!</h1>
+                    <h2 style="font-size:3rem; color:#fff; margin:10px 0;">${result.score} / ${result.total}</h2>
+                    <p style="color:#aaa; font-size:1.2rem;">⏱ Time: ${timeTakenSeconds} sec</p>
+                    <button class="btn-control btn-next" onclick="location.href='dashboard.html'" style="margin-top:20px;">Leaderboard 🏆</button>
+                </div>
             `;
         } else {
-            document.getElementById("quiz-area").innerHTML = `
-                <h2 style="color:red;">❌ Submission Failed</h2>
-                <p>${result.message}</p>
-                <button class="btn-control" onclick="location.href='dashboard.html'">Go Back</button>
-            `;
+            alert("Submission Failed: " + result.message);
+            location.href = "dashboard.html";
         }
     } catch (e) {
         console.error(e);
-        document.getElementById("quiz-area").innerHTML = `
-            <h2 style="color:red;">⚠️ Server Error</h2>
-            <p>Could not save score. Check console.</p>
-            <button class="btn-control" onclick="location.href='dashboard.html'">Go Back</button>
-        `;
+        alert("Server Error");
     }
 }
 
-// 7. Timer
+// 7. Timer UI (Count Up)
 function startTimer() {
     timerInterval = setInterval(() => {
-        timeLeft--;
-        const min = Math.floor(timeLeft / 60);
-        const sec = timeLeft % 60;
+        const now = Date.now();
+        const diff = Math.floor((now - startTime) / 1000);
+        
+        const min = Math.floor(diff / 60);
+        const sec = diff % 60;
+        
         const timerEl = document.getElementById("timer");
         if(timerEl) timerEl.innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
-        
-        if(timeLeft <= 0) {
-            clearInterval(timerInterval);
-            alert("Time's Up! Submitting automatically.");
-            submitQuiz();
-        }
     }, 1000);
 }
 
 window.quitQuiz = () => {
-    if(confirm("Quit Quiz? Progress will be lost.")) location.href = "dashboard.html";
+    if(confirm("Quit Quiz?")) location.href = "dashboard.html";
 };
+
+// 8. Keyboard Navigation
+document.addEventListener('keydown', (e) => {
+    if(e.key >= '1' && e.key <= '4') {  
+        const options = ['a', 'b', 'c', 'd'];
+        selectOption(options[parseInt(e.key) - 1]);
+    } else if(e.key === 'ArrowRight') {
+        nextQuestion();
+    }    else if(e.key === 'q' || e.key === 'Q') {
+        quitQuiz();
+    }
+});
+
+// End of quiz.js

@@ -1,0 +1,171 @@
+/* assets/css/quiz.css */
+
+/* Import Main Variables if not already loaded */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    background-color: #05080d; /* Fallback if dashboard.css fails */
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden; /* Prevent scrolling during quiz */
+}
+
+/* --- WRAPPER & LAYOUT --- */
+.main-content {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.quiz-wrapper {
+    width: 100%;
+    max-width: 850px; /* Wider on Desktop */
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- TIMER --- */
+.timer-box { 
+    font-size: 1.5rem; 
+    font-weight: 600;
+    color: var(--neon-blue, #00ffe1); 
+    border: 2px solid var(--neon-blue, #00ffe1); 
+    display: inline-block; 
+    padding: 10px 30px; 
+    border-radius: 50px; 
+    margin-bottom: 30px;
+    background: rgba(0, 255, 225, 0.05);
+    box-shadow: 0 0 20px rgba(0, 255, 225, 0.2);
+}
+
+/* --- QUESTION BOX --- */
+.question-info {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    color: #8b949e;
+}
+
+.question-box {
+    background: rgba(255, 255, 255, 0.03); 
+    padding: 40px; 
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    margin-bottom: 40px;
+    font-size: 1.4rem; 
+    font-weight: 500;
+    line-height: 1.6;
+    min-height: 160px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* --- OPTIONS GRID (Responsive) --- */
+.options-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; /* 2 Columns Desktop */
+    gap: 20px; 
+}
+
+.option-btn {
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff; 
+    padding: 20px 25px; 
+    border-radius: 16px; 
+    font-size: 1.1rem; 
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+    text-align: left;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover Effect */
+.option-btn:hover { 
+    border-color: var(--neon-blue, #00ffe1); 
+    background: rgba(0, 255, 225, 0.05); 
+    transform: translateY(-3px);
+}
+
+/* Selected State */
+.option-btn.selected { 
+    background: var(--neon-blue, #00ffe1); 
+    color: #000; 
+    font-weight: 600; 
+    border-color: var(--neon-blue, #00ffe1);
+    box-shadow: 0 0 25px rgba(0, 255, 225, 0.4);
+}
+
+/* --- CONTROLS --- */
+.controls { 
+    margin-top: 40px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.btn-control { 
+    padding: 14px 35px; 
+    border-radius: 12px; 
+    border: none; 
+    cursor: pointer; 
+    font-weight: 600; 
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    transition: 0.3s;
+}
+
+.btn-next { 
+    background: linear-gradient(135deg, #bd00ff 0%, #7d00ff 100%); 
+    color: #fff; 
+    box-shadow: 0 5px 15px rgba(189, 0, 255, 0.3);
+}
+.btn-next:hover { transform: translateX(5px); box-shadow: 0 8px 25px rgba(189, 0, 255, 0.5); }
+
+.btn-exit { 
+    background: rgba(255, 255, 255, 0.1); 
+    color: #aaa; 
+}
+.btn-exit:hover { background: rgba(255, 68, 68, 0.2); color: #ff4444; }
+
+
+/* --- MOBILE RESPONSIVENESS (Max Width 768px) --- */
+@media (max-width: 768px) {
+    .main-content { padding: 15px; align-items: flex-start; overflow-y: auto; } /* Allow scroll on small phones */
+    
+    .quiz-wrapper { margin-top: 20px; padding-bottom: 50px; }
+    
+    .question-box { 
+        font-size: 1.1rem; 
+        padding: 25px; 
+        min-height: auto; /* Auto height for long questions */
+        margin-bottom: 30px;
+    }
+    
+    .timer-box { font-size: 1.2rem; padding: 8px 20px; }
+    
+    /* STACK OPTIONS VERTICALLY */
+    .options-grid { 
+        grid-template-columns: 1fr; /* 1 Column Mobile */
+        gap: 15px;
+    }
+    
+    .option-btn { 
+        padding: 18px; 
+        font-size: 1rem; 
+    }
+    
+    .controls { 
+        margin-top: 30px;
+    }
+    
+    .btn-control { padding: 12px 25px; width: 45%; } /* Side by side buttons */
+}

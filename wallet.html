@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet | NextEdu</title>
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/wallet.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span>
+        </div>
+
+        <a href="dashboard.html" class="nav-item  "><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="leaderboard.html" class="nav-item  "><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+        <a href="history.html" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+        <a href="wallet.html" class="nav-item active "><i class="fa-solid fa-wallet"></i> Wallet</a>
+        <a href="subscription.html" class="nav-item" style="color: #ffd700;"><i class="fa-solid fa-crown"></i> Upgrade</a>
+        <a href="profile.html" class="nav-item"><i class="fa-solid fa-user-gear"></i> Profile</a>
+
+        <div style="margin-top: auto;">
+            <a href="#" onclick="logout()" class="nav-item" style="color: #ff4444;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </a>
+            <br> <br>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="welcome">
+                <h1>💳 My Wallet</h1>
+                <p>Manage funds & transactions</p>
+            </div>
+        </header>
+
+        <div class="wallet-container">
+            <div class="balance-card">
+                <p>Available Balance</p>
+                <h1 id="wallet-balance">₹ 0.00</h1>
+                <div class="action-buttons">
+                    <button onclick="scrollToDeposit()" class="btn-add"><i class="fa-solid fa-plus"></i> Add Money</button>
+                    <button onclick="location.href='subscription.html'" class="btn-sub"><i class="fa-solid fa-crown"></i> Upgrade Plan</button>
+                </div>
+            </div>
+
+            <div class="deposit-section" id="deposit-area">
+                <h3><i class="fa-solid fa-qrcode"></i> Add Money via UPI</h3>
+                <div class="qr-box">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=edu.elf@ptyes&pn=NextEdu" alt="Pay QR">
+                    <p style="color:#aaa; font-size:0.9rem; margin-top:10px;">Scan to Pay</p>
+                </div>
+
+                <div class="upi-apps">
+                    <a href="upi://pay?pa=edu.elf@ptyes&pn=NextEdu" class="app-link"><i class="fa-solid fa-google-pay"></i> GPay</a>
+                    <a href="upi://pay?pa=edu.elf@ptyes&pn=NextEdu" class="app-link"><i class="fa-solid fa-mobile-screen"></i> PhonePe</a>
+                    <a href="upi://pay?pa=edu.elf@ptyes&pn=NextEdu" class="app-link"><i class="fa-solid fa-wallet"></i> Paytm</a>
+                </div>
+
+                <div class="utr-form">
+                    <label>Amount Paid (₹)</label>
+                    <input type="number" id="dep_amount" placeholder="e.g. 499">
+                    
+                    <label>UTR / Reference Number (12 Digits)</label>
+                    <input type="text" id="dep_utr" placeholder="e.g. 3049xxxxxxxx">
+                    
+                    <button onclick="submitDeposit()" class="btn-confirm">Submit Payment Details</button>
+                    <p style="font-size:0.8rem; color:#777; margin-top:10px;">Balance will be updated after admin verification (10-30 mins).</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top:40px;">📜 History</h3>
+            <div class="history-list" id="trans-history">
+                <p style="text-align:center; padding:20px;">Loading...</p>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="assets/js/wallet.js"></script>
+</body>
+</html>

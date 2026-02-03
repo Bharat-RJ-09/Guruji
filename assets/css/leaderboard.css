@@ -1,0 +1,229 @@
+/* assets/css/leaderboard.css */
+
+/* 1. Import Fonts & Variables */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-dark: #090c10;
+    --card-glass: rgba(22, 27, 34, 0.7);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --neon-blue: #00f0ff;
+    --neon-purple: #bd00ff;
+    --neon-gold: #ffd700;
+    --text-white: #f0f6fc;
+    --text-grey: #8b949e;
+    --accent-gradient: linear-gradient(135deg, #00f0ff 0%, #007bff 100%);
+    --sidebar-width: 280px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-dark);
+    /* Subtle Mesh Gradient Background */
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(189, 0, 255, 0.03) 0%, transparent 40%);
+    color: var(--text-white);
+    font-family: 'Poppins', sans-serif;
+    margin: 0; padding: 0;
+    display: flex; height: 100vh; overflow: hidden;
+}
+
+/* --- SIDEBAR (Shared Design) --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background: rgba(13, 17, 23, 0.95);
+    border-right: 1px solid var(--border-glass);
+    padding: 30px 20px;
+    display: flex; flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brand { 
+    font-size: 1.6rem; font-weight: 700; margin-bottom: 50px; 
+    color: #fff; display: flex; align-items: center; gap: 12px;
+}
+.brand span { 
+    background: var(--accent-gradient); 
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+}
+
+.nav-item {
+    padding: 14px 18px; margin-bottom: 8px;
+    color: var(--text-grey); text-decoration: none;
+    border-radius: 12px; transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 15px;
+    font-size: 0.95rem; font-weight: 500;
+}
+.nav-item:hover, .nav-item.active {
+    background: rgba(0, 240, 255, 0.08);
+    color: var(--neon-blue);
+    transform: translateX(5px);
+}
+.nav-item i { width: 20px; text-align: center; }
+
+/* --- MAIN LAYOUT --- */
+.main-content {
+    flex: 1; padding: 40px; overflow-y: auto; position: relative;
+    width: 100%;
+}
+
+.header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 30px;
+}
+.menu-btn { display: none; background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
+
+.welcome h1 { font-size: 2rem; margin: 0; font-weight: 600; }
+.welcome p { color: var(--text-grey); margin: 5px 0 0; font-size: 0.95rem; }
+
+
+/* --- LEADERBOARD SPECIFIC STYLES --- */
+
+/* 1. Filter Dropdown */
+.filter-select {
+    width: 100%;
+    max-width: 350px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    background-color: var(--card-glass);
+    color: #fff;
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    /* Custom Arrow */
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27292.4%27%20height%3D%27292.4%27%3E%3Cpath%20fill%3D%27%2300f0ff%27%20d%3D%27M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%27%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 12px;
+}
+
+.filter-select:focus {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    background-color: rgba(13, 17, 23, 0.9);
+}
+
+/* 2. Table Container (Glassmorphism) */
+.lb-table-container {
+    background: var(--card-glass);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid var(--border-glass);
+    overflow: hidden; /* For rounded corners */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* 3. Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Ensures horizontal scroll on mobile */
+}
+
+thead {
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--border-glass);
+}
+
+th {
+    padding: 20px;
+    text-align: left;
+    color: var(--text-grey);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+td {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-glass);
+    color: var(--text-white);
+    vertical-align: middle;
+    font-size: 1rem;
+}
+
+/* Row Hover Effect */
+tbody tr {
+    transition: background 0.2s ease;
+}
+tbody tr:hover {
+    background: rgba(0, 240, 255, 0.03);
+}
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 4. Rank Badges & Icons */
+.rank-1 { color: #FFD700; font-size: 1.5rem; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+.rank-2 { color: #C0C0C0; font-size: 1.3rem; }
+.rank-3 { color: #CD7F32; font-size: 1.3rem; }
+
+/* Score Styling */
+td:nth-child(3) {
+    font-weight: 700;
+    color: var(--neon-blue);
+    font-size: 1.1rem;
+}
+
+/* Time Taken Styling */
+td:nth-child(4) {
+    color: var(--text-grey);
+    font-family: monospace; /* Digital clock look */
+    font-size: 1.1rem;
+}
+
+/* Student Name & Username */
+td span {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-grey);
+    margin-top: 4px;
+}
+
+
+/* --- ANIMATIONS --- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+    /* Sidebar Hide/Show */
+    .sidebar {
+        position: fixed; top: 0; left: 0; height: 100%;
+        transform: translateX(-100%);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    }
+    .sidebar.active { transform: translateX(0); }
+    
+    .sidebar-overlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 900;
+    }
+    .sidebar.active ~ .sidebar-overlay { display: block; }
+
+    /* Layout Adjustments */
+    .menu-btn { display: block; }
+    .main-content { padding: 20px; }
+    .header { flex-direction: row; gap: 15px; }
+    
+    /* Table Scroll */
+    .lb-table-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Filter */
+    .filter-select { max-width: 100%; }
+}

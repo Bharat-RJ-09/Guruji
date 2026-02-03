@@ -5,34 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playing Quiz | NextEdu</title>
     <link rel="stylesheet" href="assets/css/dashboard.css">
-    <style>
-        /* Quiz Specific Styles */
-        .quiz-wrapper { max-width: 800px; margin: 0 auto; text-align: center; }
-        .timer-box { 
-            font-size: 1.5rem; color: var(--neon-blue); border: 2px solid var(--neon-blue); 
-            display: inline-block; padding: 10px 25px; border-radius: 30px; margin-bottom: 30px;
-            box-shadow: 0 0 15px rgba(0, 255, 225, 0.3);
-        }
-        .question-box {
-            background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 30px;
-            font-size: 1.4rem; min-height: 150px; display: flex; align-items: center; justify-content: center;
-        }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .option-btn {
-            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff; padding: 20px; border-radius: 12px; font-size: 1.1rem; cursor: pointer;
-            transition: 0.3s; text-align: left;
-        }
-        .option-btn:hover { border-color: var(--neon-blue); background: rgba(0, 255, 225, 0.1); }
-        .option-btn.selected { background: var(--neon-blue); color: #000; font-weight: bold; }
-        
-        .controls { margin-top: 30px; display: flex; justify-content: space-between; }
-        .btn-control { padding: 12px 30px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; }
-        .btn-next { background: var(--neon-purple); color: #fff; }
-        
-        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
-    </style>
+    <link rel="stylesheet" href="assets/css/quiz.css">
+     
 </head>
 <body>
     <div style="position:fixed; top:-20%; left:-10%; width:600px; height:600px; background:radial-gradient(circle, rgba(189, 0, 255, 0.1), transparent 70%); z-index:-1;"></div>

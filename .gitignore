@@ -7,3 +7,6 @@ Thumbs.db
 
 # Ignore User Uploads (Future ke liye)
 public/uploads/
+
+# Ignore Secrets
+config/secrets.php

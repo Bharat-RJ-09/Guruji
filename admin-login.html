@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Access | NextEdu</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+        div{
+            box-shadow: 0 0 20px rgba(0,255,0,0.2);
+            border-radius: 10px;
+            
+        }
+    </style>
+</head>
+<body style="background:#000; display:flex; justify-content:center; align-items:center; height:100vh;">
+    <div style="text-align:center; width:300px;">
+        <h1 style="color:#fff; font-family:monospace; margin-bottom:20px;">SYSTEM ACCESS</h1>
+        <input type="password" id="adminPass" placeholder="Enter Security Code" 
+            style="width:100%; padding:15px; background:#111; border:1px solid #333; color:#0f0; text-align:center; font-size:1.2rem; outline:none; letter-spacing:5px;">
+        <button onclick="login()" style="width:100%; padding:15px; margin-top:10px; background:#0f0; border:none; font-weight:bold; cursor:pointer;">UNLOCK</button>
+    </div>
+
+    <script>
+        async function login() {
+            const pass = document.getElementById('adminPass').value;
+            const res = await fetch('api/admin/login.php', {
+                method: 'POST', body: JSON.stringify({ password: pass })
+            });
+            const data = await res.json();
+            if(data.status === 'success') window.location.href = 'admin-panel.html';
+            else alert("ACCESS DENIED");
+        }
+    </script>
+</body>
+</html>

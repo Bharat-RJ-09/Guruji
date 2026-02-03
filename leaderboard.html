@@ -4,35 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard | NextEdu</title>
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/leaderboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Table Styles */
-        .lb-table-container { overflow-x: auto; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        th { background: rgba(0, 255, 225, 0.1); color: var(--neon-blue); font-weight: bold; }
-        tr:hover { background: rgba(255,255,255,0.02); }
-        
-        /* Rank Badges */
-        .rank-1 { color: #FFD700; font-size: 1.2rem; } 
-        .rank-2 { color: #C0C0C0; font-size: 1.1rem; } 
-        .rank-3 { color: #CD7F32; font-size: 1.1rem; } 
-
-        /* Filter Dropdown */
-        .filter-select {
-            padding: 10px; background: #000; color: #fff; border: 1px solid var(--neon-blue);
-            border-radius: 8px; margin-bottom: 20px; outline: none; width: 100%; max-width: 300px;
-        }
-    </style>
+    
 </head>
 <body>
 
     <aside class="sidebar" id="sidebar">
-        <div class="brand"><i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span></div>
-        <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-        <a href="#" class="nav-item active"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
-        <a href="#" class="nav-item" onclick="logout()" style="color: #ff4444;"><i class="fa-solid fa-power-off"></i> Logout</a>
+        <div class="brand">
+            <i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span>
+        </div>
+
+        <a href="dashboard.html" class="nav-item  "><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="leaderboard.html" class="nav-item active "><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+        <a href="history.html" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+        <a href="wallet.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Wallet</a>
+        <a href="subscription.html" class="nav-item" style="color:var(--neon-gold);"><i class="fa-solid fa-crown"></i> Upgrade</a>
+        <a href="profile.html" class="nav-item"><i class="fa-solid fa-user-gear"></i> Profile</a>
+
+        <div style="margin-top: auto;">
+            <a href="#" onclick="logout()" class="nav-item" style="color: #ff4444;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </a>
+            <br> <br>
+        </div>
     </aside>
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
@@ -54,20 +49,19 @@
         </select>
 
         <div class="lb-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th width="10%">Rank</th>
-                        <th width="50%">Student</th>
-                        <th width="20%">Score</th>
-                        <th width="20%">Badge</th>
-                    </tr>
-                </thead>
-                <tbody id="lb-body">
-                    <tr><td colspan="4" style="text-align:center;">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
+    <table>
+        <thead>
+            <tr>
+                <th width="10%">Rank</th>
+                <th width="40%">Student</th>
+                <th width="20%">Score</th>
+                <th width="30%">Time Taken</th> </tr>
+        </thead>
+        <tbody id="lb-body">
+            <tr><td colspan="4" style="text-align:center;">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
     </main>
 
     <script src="assets/js/dashboard.js"></script> 

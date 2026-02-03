@@ -1,0 +1,221 @@
+/* assets/css/wallet.css */
+
+/* --- ANIMATIONS ENGINE --- */
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.5); }
+    100% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+}
+
+/* --- LAYOUT --- */
+.wallet-container { 
+    max-width: 900px; 
+    margin: 0 auto; 
+    padding-bottom: 50px;
+}
+
+/* --- 1. HOLOGRAPHIC BALANCE CARD 💳 --- */
+.balance-card {
+    background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
+    padding: 40px; 
+    border-radius: 24px; 
+    text-align: center; 
+    color: #fff;
+    position: relative; 
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 97, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Animation Entrance */
+    animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* The "Shine" Effect passing through the card */
+.balance-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(
+        to right, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.3) 50%, 
+        rgba(255,255,255,0) 100%
+    );
+    transform: skewX(-25deg);
+    animation: shimmer 6s infinite;
+}
+
+.balance-card p {
+    font-size: 1rem; text-transform: uppercase; letter-spacing: 2px;
+    opacity: 0.9; margin: 0;
+}
+
+.balance-card h1 { 
+    font-size: 3.5rem; margin: 15px 0 30px; 
+    font-weight: 700; text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Action Buttons (Glass Pills) */
+.action-buttons {
+    display: flex; justify-content: center; gap: 15px; position: relative; z-index: 2;
+}
+
+.btn-add, .btn-sub {
+    padding: 14px 28px; border: none; border-radius: 50px; 
+    font-weight: 600; cursor: pointer; font-size: 1rem;
+    transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;
+}
+
+.btn-add {
+    background: rgba(0, 0, 0, 0.6); 
+    color: #fff; 
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(5px);
+}
+.btn-add:hover { background: #000; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+
+.btn-sub {
+    background: #fff; 
+    color: #0061ff; 
+    box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+}
+.btn-sub:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255,255,255,0.5); }
+
+
+/* --- 2. DEPOSIT SECTION (Glass Panel) --- */
+.deposit-section {
+    background: var(--card-glass); /* Uses dashboard variable */
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glass);
+    padding: 35px; border-radius: 24px; 
+    margin-top: 40px;
+    display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px;
+    /* Entrance Animation */
+    opacity: 0;
+    animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s;
+}
+
+.deposit-section h3 {
+    grid-column: 1 / -1; margin: 0 0 10px; font-size: 1.4rem;
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* QR Code Box */
+.qr-box { 
+    background: #fff; 
+    padding: 20px; 
+    border-radius: 20px; 
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+    transition: transform 0.3s;
+}
+.qr-box:hover { transform: scale(1.03); }
+.qr-box img { width: 100%; max-width: 180px; display: block; margin: 0 auto; }
+
+/* UPI Apps */
+.upi-apps { 
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; 
+}
+.app-link {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(255, 255, 255, 0.05); 
+    padding: 15px; border-radius: 16px; 
+    color: #fff; text-decoration: none; font-size: 0.85rem; font-weight: 500;
+    border: 1px solid var(--border-glass); 
+    transition: 0.3s;
+}
+.app-link i { font-size: 1.5rem; margin-bottom: 5px; }
+.app-link:hover { 
+    background: rgba(0, 240, 255, 0.1); 
+    border-color: var(--neon-blue);
+    transform: translateY(-5px);
+    animation: float 2s infinite ease-in-out;
+}
+
+/* Inputs & Form */
+.utr-form label {
+    display: block; margin-bottom: 8px; color: #b0bec5; font-size: 0.9rem; margin-top: 15px;
+}
+.utr-form input {
+    width: 100%; padding: 16px; 
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-glass); 
+    color: #fff; border-radius: 12px; font-size: 1rem; outline: none;
+    transition: 0.3s;
+}
+.utr-form input:focus {
+    border-color: var(--neon-blue);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+}
+
+.btn-confirm {
+    width: 100%; padding: 16px; margin-top: 25px;
+    background: linear-gradient(135deg, #00f0ff 0%, #007bff 100%);
+    border: none; border-radius: 12px; 
+    color: #000; font-weight: 700; font-size: 1rem; cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0, 240, 255, 0.3);
+    transition: 0.3s;
+}
+.btn-confirm:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 240, 255, 0.5);
+}
+
+
+/* --- 3. TRANSACTION HISTORY --- */
+h3 { color: #fff; margin-bottom: 20px; }
+
+.history-list {
+    opacity: 0;
+    animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.4s;
+}
+
+.trans-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.03); 
+    padding: 20px; border-radius: 16px;
+    margin-bottom: 12px; 
+    border-left: 5px solid transparent;
+    transition: 0.3s;
+    border: 1px solid var(--border-glass);
+}
+.trans-item:hover {
+    background: rgba(255,255,255,0.06);
+    transform: translateX(5px);
+}
+
+/* Status Colors */
+.trans-item.success { border-left-color: #00ff88; }
+.trans-item.pending { border-left-color: #ffd700; }
+.trans-item.failed { border-left-color: #ff4444; }
+
+/* Status Text Glow */
+.trans-item.success h4 span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+.trans-item.pending h4 span { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+    .deposit-section { grid-template-columns: 1fr; gap: 30px; }
+    .balance-card h1 { font-size: 2.5rem; }
+    .qr-box img { max-width: 140px; }
+    .action-buttons { flex-direction: column; }
+    .btn-add, .btn-sub { width: 100%; justify-content: center; }
+}

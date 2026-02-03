@@ -1,90 +1,66 @@
 <?php
 // api/quiz/submit.php
 
-// 1. Silent Errors (JSON fix)
 error_reporting(0);
 ini_set('display_errors', 0);
-
 session_start();
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
+header("Content-Type: application/json");
 
-// 2. DB Connection
-if (!file_exists('../../config/db.php')) {
-    echo json_encode(["status" => "error", "message" => "DB Config Missing"]);
-    exit;
-}
-include '../../config/db.php';
+include '../../config/db.php'; 
 
-// 3. Login Check
-if(!isset($_SESSION['user_id'])){
+// 1. Check Login
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(["status" => "error", "message" => "Login Required"]);
     exit;
 }
 
-// 4. Receive Data
-$input = file_get_contents("php://input");
-$data = json_decode($input, true);
+// 2. Receive Data
+$input = json_decode(file_get_contents("php://input"), true);
+$subject = $input['subject'] ?? 'english';
+$user_answers = $input['answers'] ?? [];
+$time_taken = isset($input['time_taken']) ? (int)$input['time_taken'] : 0; // Get Time
 
-if (!isset($data['subject']) || !isset($data['answers'])) {
-    echo json_encode(["status" => "error", "message" => "Invalid Data Received"]);
-    exit;
-}
+// 3. Load Correct Answers from JSON
+$json_file = __DIR__ . "/../data/" . $subject . ".json";
 
-$user_id = $_SESSION['user_id'];
-$subject = $data['subject'];
-$user_answers = $data['answers'];
-
-// 5. Load Questions
-$json_file = "../data/" . $subject . ".json";
 if (!file_exists($json_file)) {
-    echo json_encode(["status" => "error", "message" => "Subject Data Not Found"]);
+    echo json_encode(["status" => "error", "message" => "Subject data missing"]);
     exit;
 }
 
 $all_questions = json_decode(file_get_contents($json_file), true);
-if (!$all_questions) {
-    echo json_encode(["status" => "error", "message" => "Question File Corrupted"]);
-    exit;
-}
-
-// 6. Map Answers (ID => Answer)
-$question_map = [];
+$map = [];
 foreach ($all_questions as $q) {
-    $question_map[$q['id']] = $q['ans'];
+    $map[$q['id']] = $q['ans']; // Map ID -> Correct Answer
 }
 
-// 7. Calculate Score
+// 4. Calculate Score
 $score = 0;
-$total = count($user_answers);
+$total = count($user_answers); // Total answered, or use count($all_questions) for accuracy
 
-foreach($user_answers as $q_id => $selected_opt) {
-    if (isset($question_map[$q_id]) && $question_map[$q_id] === $selected_opt) {
+foreach ($user_answers as $q_id => $user_opt) {
+    if (isset($map[$q_id]) && $map[$q_id] == $user_opt) {
         $score++;
     }
 }
 
-// 8. Save to DB
-$save_sql = "INSERT INTO quiz_history (user_id, subject, score, total_questions) VALUES (?, ?, ?, ?)";
-$stmt = $conn->prepare($save_sql);
+// 5. Save to Database (ONLY ONE TIME)
+$user_id = $_SESSION['user_id'];
 
-if (!$stmt) {
-    echo json_encode(["status" => "error", "message" => "DB Prepare Failed: " . $conn->error]);
-    exit;
-}
-
-$stmt->bind_param("isii", $user_id, $subject, $score, $total);
+// Make sure your database table 'quiz_history' has the 'time_taken' column!
+$stmt = $conn->prepare("INSERT INTO quiz_history (user_id, subject, score, total_questions, time_taken) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("isiii", $user_id, $subject, $score, $total, $time_taken);
 
 if($stmt->execute()){
     echo json_encode([
         "status" => "success", 
         "score" => $score, 
         "total" => $total,
-        "message" => "Quiz Submitted Successfully!"
+        "time" => $time_taken
     ]);
 } else {
-    echo json_encode(["status" => "error", "message" => "DB Save Failed: " . $stmt->error]);
+    // If this fails, it usually means the 'time_taken' column is missing in DB
+    echo json_encode(["status" => "error", "message" => "DB Error: " . $conn->error]);
 }
-
-$conn->close();
 ?>
