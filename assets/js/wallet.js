@@ -1,72 +1,113 @@
 // assets/js/wallet.js
 const API_WALLET = "api/wallet";
+const API_PROFILE = "api/secure/profile.php";
 
-window.onload = loadWalletInfo;
+document.addEventListener("DOMContentLoaded", async () => {
+    loadWalletInfo();
+    
+    // ✨ Load User Theme (Visual Tier System)
+    try {
+        const res = await fetch(API_PROFILE);
+        const data = await res.json();
+        if(data.status === "success" && data.user.subscription_plan && window.applyTheme) {
+            window.applyTheme(data.user.subscription_plan);
+        }
+    } catch(e) { console.log("Theme load error"); }
+});
 
 async function loadWalletInfo() {
     try {
         const res = await fetch(`${API_WALLET}/info.php`);
         const data = await res.json();
-
+        
         if (data.status === "success") {
-            // Update Balance
-            document.getElementById("wallet-balance").innerText = "₹ " + data.balance;
-
-            // Update History
-            const list = document.getElementById("trans-history");
+            // Animate Balance Count Up? (Simple implementation)
+            document.getElementById("balance").innerText = "₹" + data.balance;
+            
+            const list = document.getElementById("history-list");
             list.innerHTML = "";
-
-            if (data.history.length === 0) {
-                list.innerHTML = "<p style='text-align:center; color:#777;'>No transactions yet.</p>";
-            } else {
-                data.history.forEach(t => {
-                    let color = t.status === 'success' ? '#00ff88' : (t.status === 'pending' ? '#ffd700' : '#ff4444');
-                    let icon = t.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up';
-                    
-                    let html = `
-                        <div class="trans-item ${t.status}">
-                            <div>
-                                <h4 style="margin:0; text-transform:capitalize;">${t.type} <span style="font-size:0.8rem; color:${color}">(${t.status})</span></h4>
-                                <small style="color:#777;">${t.date} • ${t.description}</small>
-                            </div>
-                            <div style="font-weight:bold; color:${t.type === 'deposit' ? '#00ff88' : '#fff'};">
-                                ${t.type === 'deposit' ? '+' : '-'} ₹${t.amount}
-                            </div>
-                        </div>
-                    `;
-                    list.innerHTML += html;
-                });
+            
+            if(data.history.length === 0) {
+                list.innerHTML = "<p style='text-align:center; color:#555; padding:20px;'>No transactions yet.</p>";
             }
-        } else {
-            alert(data.message);
+
+            data.history.forEach(tx => {
+                const isDeposit = tx.type === 'deposit';
+                const color = isDeposit ? '#00ff88' : '#ff4444'; // Green or Red
+                const icon = isDeposit ? 'fa-arrow-down' : 'fa-arrow-up';
+                const sign = isDeposit ? '+' : '-';
+                const bgClass = isDeposit ? 'bg-green' : 'bg-red';
+
+                list.innerHTML += `
+                    <div class="tx-item">
+                        <div class="tx-icon ${bgClass}">
+                            <i class="fa-solid ${icon}"></i>
+                        </div>
+                        <div class="tx-details">
+                            <h4>${tx.description}</h4>
+                            <small>${tx.date}</small>
+                        </div>
+                        <div class="tx-amount" style="color:${color}">
+                            ${sign}₹${tx.amount}
+                        </div>
+                    </div>
+                `;
+            });
         }
     } catch (e) {
         console.error(e);
+        document.getElementById("history-list").innerHTML = "<p style='text-align:center; color:red;'>Server Error</p>";
     }
 }
 
-async function submitDeposit() {
-    const amount = document.getElementById("dep_amount").value;
-    const utr = document.getElementById("dep_utr").value;
+// --- MODAL LOGIC ---
+function openDepositModal() {
+    document.getElementById("depositModal").classList.add("active");
+    document.getElementById("depositAmount").focus();
+}
 
-    if (!amount || !utr) return alert("Please enter Amount and UTR.");
+function closeDepositModal() {
+    document.getElementById("depositModal").classList.remove("active");
+    document.getElementById("depositAmount").value = "";
+}
+
+// --- SECURE DEPOSIT ---
+async function processDeposit() {
+    const amountInput = document.getElementById("depositAmount");
+    const amount = parseFloat(amountInput.value);
+    const btn = document.getElementById("btn-process-deposit");
+
+    // 1. Validation
+    if(!amount || isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid amount (Min ₹1).");
+        return;
+    }
+
+    // 2. Disable Button (Prevent Double Click)
+    btn.disabled = true;
+    btn.innerHTML = `Processing... <i class="fa-solid fa-circle-notch fa-spin"></i>`;
 
     try {
         const res = await fetch(`${API_WALLET}/deposit.php`, {
             method: "POST",
-            body: JSON.stringify({ amount, utr })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: amount })
         });
         const result = await res.json();
         
-        if (result.status === "success") {
-            alert("✅ Request Submitted! Please wait for admin approval.");
-            location.reload();
+        if(result.status === "success") {
+            // Success!
+            closeDepositModal();
+            loadWalletInfo(); 
+            // Optional: Show a nice "Success" toast here
         } else {
             alert("❌ " + result.message);
         }
-    } catch (e) { alert("Server Error"); }
-}
-
-function scrollToDeposit() {
-    document.getElementById("deposit-area").scrollIntoView({ behavior: 'smooth' });
+    } catch(e) { 
+        alert("Server Error. Check connection."); 
+    } finally {
+        // Reset Button
+        btn.disabled = false;
+        btn.innerHTML = `Add Securely <i class="fa-solid fa-lock"></i>`;
+    }
 }

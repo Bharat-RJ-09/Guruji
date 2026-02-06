@@ -11,26 +11,52 @@
 
     <div class="auth-card">
         <h2>Create Account</h2>
-        <p>Join the future of learning 🚀</p>
+        
+        <div id="telegram-login-container" style="text-align: center; margin-bottom: 20px;">
+            <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                    data-telegram-login="NextEdu_verifier_bot" 
+                    data-size="large" 
+                    data-radius="10" 
+                    data-onauth="onTelegramAuth(user)" 
+                    data-request-access="write"></script>
+            <p id="tg-hint" style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">
+                👆 Tap to Auto-fill ID (Optional)
+            </p>
+        </div>
+
+        <div class="divider">OR FILL MANUALLY</div>
 
         <div id="msgBox" class="message-box"></div>
 
         <form id="signupForm">
             <div class="input-group">
                 <label>Full Name</label>
-                <input type="text" id="full_name" required placeholder="Name">
+                <input type="text" id="full_name" required>
             </div>
             <div class="input-group">
                 <label>Username</label>
-                <input type="text" id="username" required placeholder="username123">
+                <input type="text" id="username" required>
             </div>
             <div class="input-group">
                 <label>Email Address</label>
-                <input type="email" id="email" required placeholder="user@example.com">
+                <input type="email" id="email" required>
             </div>
+            
+            <div class="input-group">
+                <label>Telegram Chat ID (Required)</label>
+                <input type="text" id="telegram_chat_id" required pattern="\d*" title="Only numbers allowed" placeholder="e.g. 123456789">
+                <small style="color: #94a3b8; font-size: 0.75rem; display: block; margin-top: 5px;">
+                    Don't know your ID? Open <a href="https://t.me/userinfobot" target="_blank" style="color: var(--accent); text-decoration: underline;">@userinfobot</a> to find it.
+                </small>
+            </div>
+
             <div class="input-group">
                 <label>Password</label>
-                <input type="password" id="password" required placeholder="•••••• (Min 6 chars)">
+                <input type="password" id="password" required minlength="4">
+            </div>
+            <div class="input-group">
+                <label>Confirm Password</label>
+                <input type="password" id="confirm_password" required minlength="4">
             </div>
             
             <button type="submit" class="btn-primary" id="submitBtn">Sign Up</button>
@@ -40,5 +66,35 @@
     </div>
 
     <script src="assets/js/auth.js"></script>
+    
+    <script>
+        // Feature: Auto-fill fields if user clicks Telegram button
+        function onTelegramAuth(user) {
+            // 1. Fill Chat ID
+            const idField = document.getElementById('telegram_chat_id');
+            idField.value = user.id;
+            
+            // Highlight effect to show it worked
+            idField.style.borderColor = "#4ade80";
+            idField.style.backgroundColor = "rgba(74, 222, 128, 0.1)";
+
+            // 2. Pre-fill Name (Only if empty)
+            const nameField = document.getElementById('full_name');
+            if(!nameField.value) {
+                nameField.value = user.first_name + (user.last_name ? " " + user.last_name : "");
+            }
+
+            // 3. Pre-fill Username (Only if empty)
+            const userField = document.getElementById('username');
+            if(!userField.value && user.username) {
+                userField.value = user.username;
+            }
+
+            // 4. Update Hint Text
+            const hint = document.getElementById('tg-hint');
+            hint.innerText = "✅ ID Auto-filled! You can still edit it below.";
+            hint.style.color = "#4ade80";
+        }
+    </script>
 </body>
 </html>

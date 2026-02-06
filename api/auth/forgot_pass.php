@@ -1,48 +1,57 @@
 <?php
 // api/auth/forgot_pass.php
 header("Content-Type: application/json");
+
+// 1. Load Config
 include '../../config/db.php';
+include '../../config/telegram.php';
 
 $data = json_decode(file_get_contents("php://input"));
-$email = isset($data->email) ? trim($data->email) : '';
+$input = $data->email_or_user ?? '';
 
-if(empty($email)) {
-    echo json_encode(["status" => "error", "message" => "Enter your email"]);
+if(empty($input)) {
+    echo json_encode(["status" => "error", "message" => "Please enter your username or email."]);
     exit;
 }
 
-// 1. Check if email exists
-$stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-$stmt->bind_param("s", $email);
+// 2. Find User
+$stmt = $conn->prepare("SELECT id, username, telegram_chat_id FROM users WHERE username = ? OR email = ?");
+$stmt->bind_param("ss", $input, $input);
 $stmt->execute();
-$res = $stmt->get_result();
+$result = $stmt->get_result();
 
-if($res->num_rows === 0){
-    // Security: Don't reveal if email exists or not, but for now we say sent
-    echo json_encode(["status" => "success", "message" => "If this email exists, a reset link has been sent.", "dev_link" => ""]);
+if($result->num_rows === 0){
+    echo json_encode(["status" => "error", "message" => "User not found."]);
     exit;
 }
 
-// 2. Generate Secure Token
-$token = bin2hex(random_bytes(32)); // 64 char random string
-$expiry = date("Y-m-d H:i:s", strtotime('+15 minutes')); // Expires in 15 mins
+$row = $result->fetch_assoc();
 
-// 3. Save to DB
-$update = $conn->prepare("UPDATE users SET reset_token = ?, token_expire = ? WHERE email = ?");
-$update->bind_param("sss", $token, $expiry, $email);
+// 3. Check if Telegram is Linked (CRITICAL CHECK)
+if(empty($row['telegram_chat_id'])){
+    echo json_encode([
+        "status" => "error", 
+        "message" => "⚠️ This account has no Telegram ID linked! We cannot send you a message. Please create a new account with the updated Signup form."
+    ]);
+    exit;
+}
+
+// 4. Generate OTP & Save to DB
+$otp_code = rand(100000, 999999);
+$update = $conn->prepare("UPDATE users SET otp = ? WHERE id = ?");
+$update->bind_param("ii", $otp_code, $row['id']);
 
 if($update->execute()){
-    // 4. Create Link
-    // CHANGE 'localhost/guruji' TO YOUR ACTUAL WEBSITE URL
-    $resetLink = "http://localhost/guruji/reset-password.html?token=" . $token;
+    // 5. Send Message via Bot
+    $msg = "🔐 <b>Password Reset</b>\n\n" .
+           "Hello <b>{$row['username']}</b>,\n" .
+           "Use this code to reset your password:\n\n" .
+           "👉 <code>$otp_code</code>\n\n" .
+           "<i>If you did not request this, ignore this message.</i>";
 
-    // In a real app, you use mail($email, "Reset Password", $msg);
-    // Since we are on Free Hosting, we return the link to the frontend to test.
-    echo json_encode([
-        "status" => "success", 
-        "message" => "Reset Link Generated! (Check Console/Alert for Link)",
-        "debug_link" => $resetLink 
-    ]);
+    sendTelegramMessage($row['telegram_chat_id'], $msg);
+
+    echo json_encode(["status" => "success", "message" => "OTP sent to your Telegram!"]);
 } else {
     echo json_encode(["status" => "error", "message" => "Database Error"]);
 }

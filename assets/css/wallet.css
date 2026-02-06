@@ -1,221 +1,175 @@
 /* assets/css/wallet.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap');
 
-/* --- ANIMATIONS ENGINE --- */
-@keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+:root {
+    --bg-dark: #090c10;
+    --card-bg: rgba(22, 27, 34, 0.7);
+    --border-light: rgba(255, 255, 255, 0.08);
+    --neon-green: #00ff88;
+    --neon-blue: #00f0ff;
+    --text-main: #f0f6fc;
 }
 
-@keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    margin: 0; padding: 0;
+    display: flex; height: 100vh; overflow: hidden;
 }
 
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-5px); }
-    100% { transform: translateY(0px); }
+/* --- SIDEBAR (Shared) --- */
+.sidebar {
+    width: 260px;
+    background: #161b22;
+    border-right: 1px solid var(--border-light);
+    padding: 20px;
+    display: flex; flex-direction: column;
+    position: fixed; left: 0; top: 0; height: 100%;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+.brand { font-size: 1.5rem; font-weight: 700; margin-bottom: 40px; color: #fff; }
+.brand span { color: var(--neon-blue); }
+
+.nav-item {
+    padding: 12px; margin-bottom: 5px; color: #8b949e; 
+    text-decoration: none; border-radius: 8px; display: flex; gap: 15px;
+    align-items: center; transition: 0.3s;
+}
+.nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); color: #fff; }
+.nav-item i { width: 20px; text-align: center; }
+
+/* --- MAIN CONTENT --- */
+.main-content {
+    flex: 1; margin-left: 260px; padding: 30px; 
+    overflow-y: auto; width: 100%; transition: margin 0.3s ease;
 }
 
-@keyframes pulse-glow {
-    0% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
-    50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.5); }
-    100% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+.header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+.menu-btn { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+.welcome h1 { margin: 0; font-size: 1.8rem; }
+.welcome p { color: #8b949e; margin: 5px 0 0; }
+
+/* --- WALLET CARD --- */
+.wallet-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-light);
+    padding: 30px;
+    border-radius: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-/* --- LAYOUT --- */
-.wallet-container { 
-    max-width: 900px; 
-    margin: 0 auto; 
-    padding-bottom: 50px;
-}
+.balance-info p { color: #8b949e; font-size: 0.9rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+.balance-info h1 { font-size: 3rem; margin: 0; color: #fff; font-weight: 700; }
 
-/* --- 1. HOLOGRAPHIC BALANCE CARD 💳 --- */
-.balance-card {
-    background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
-    padding: 40px; 
-    border-radius: 24px; 
-    text-align: center; 
-    color: #fff;
-    position: relative; 
-    overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 97, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    /* Animation Entrance */
-    animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-/* The "Shine" Effect passing through the card */
-.balance-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(
-        to right, 
-        rgba(255,255,255,0) 0%, 
-        rgba(255,255,255,0.3) 50%, 
-        rgba(255,255,255,0) 100%
-    );
-    transform: skewX(-25deg);
-    animation: shimmer 6s infinite;
-}
-
-.balance-card p {
-    font-size: 1rem; text-transform: uppercase; letter-spacing: 2px;
-    opacity: 0.9; margin: 0;
-}
-
-.balance-card h1 { 
-    font-size: 3.5rem; margin: 15px 0 30px; 
-    font-weight: 700; text-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-/* Action Buttons (Glass Pills) */
-.action-buttons {
-    display: flex; justify-content: center; gap: 15px; position: relative; z-index: 2;
-}
-
-.btn-add, .btn-sub {
-    padding: 14px 28px; border: none; border-radius: 50px; 
-    font-weight: 600; cursor: pointer; font-size: 1rem;
-    transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;
-}
-
-.btn-add {
-    background: rgba(0, 0, 0, 0.6); 
-    color: #fff; 
-    border: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(5px);
-}
-.btn-add:hover { background: #000; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-
-.btn-sub {
-    background: #fff; 
-    color: #0061ff; 
-    box-shadow: 0 5px 15px rgba(255,255,255,0.3);
-}
-.btn-sub:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255,255,255,0.5); }
-
-
-/* --- 2. DEPOSIT SECTION (Glass Panel) --- */
-.deposit-section {
-    background: var(--card-glass); /* Uses dashboard variable */
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border-glass);
-    padding: 35px; border-radius: 24px; 
-    margin-top: 40px;
-    display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px;
-    /* Entrance Animation */
-    opacity: 0;
-    animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s;
-}
-
-.deposit-section h3 {
-    grid-column: 1 / -1; margin: 0 0 10px; font-size: 1.4rem;
+.deposit-btn {
+    background: var(--neon-blue);
+    color: #000;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
     display: flex; align-items: center; gap: 10px;
 }
+.deposit-btn:hover { transform: translateY(-3px); box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); }
 
-/* QR Code Box */
-.qr-box { 
-    background: #fff; 
-    padding: 20px; 
-    border-radius: 20px; 
-    text-align: center;
-    box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
-    transition: transform 0.3s;
-}
-.qr-box:hover { transform: scale(1.03); }
-.qr-box img { width: 100%; max-width: 180px; display: block; margin: 0 auto; }
-
-/* UPI Apps */
-.upi-apps { 
-    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; 
-}
-.app-link {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-    background: rgba(255, 255, 255, 0.05); 
-    padding: 15px; border-radius: 16px; 
-    color: #fff; text-decoration: none; font-size: 0.85rem; font-weight: 500;
-    border: 1px solid var(--border-glass); 
-    transition: 0.3s;
-}
-.app-link i { font-size: 1.5rem; margin-bottom: 5px; }
-.app-link:hover { 
-    background: rgba(0, 240, 255, 0.1); 
-    border-color: var(--neon-blue);
-    transform: translateY(-5px);
-    animation: float 2s infinite ease-in-out;
-}
-
-/* Inputs & Form */
-.utr-form label {
-    display: block; margin-bottom: 8px; color: #b0bec5; font-size: 0.9rem; margin-top: 15px;
-}
-.utr-form input {
-    width: 100%; padding: 16px; 
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border-glass); 
-    color: #fff; border-radius: 12px; font-size: 1rem; outline: none;
-    transition: 0.3s;
-}
-.utr-form input:focus {
-    border-color: var(--neon-blue);
-    background: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
-}
-
-.btn-confirm {
-    width: 100%; padding: 16px; margin-top: 25px;
-    background: linear-gradient(135deg, #00f0ff 0%, #007bff 100%);
-    border: none; border-radius: 12px; 
-    color: #000; font-weight: 700; font-size: 1rem; cursor: pointer;
-    box-shadow: 0 5px 20px rgba(0, 240, 255, 0.3);
-    transition: 0.3s;
-}
-.btn-confirm:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0, 240, 255, 0.5);
-}
-
-
-/* --- 3. TRANSACTION HISTORY --- */
-h3 { color: #fff; margin-bottom: 20px; }
+/* --- TRANSACTION HISTORY --- */
+.section-title { margin-bottom: 20px; font-size: 1.2rem; border-left: 4px solid var(--neon-blue); padding-left: 15px; }
 
 .history-list {
-    opacity: 0;
-    animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.4s;
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    overflow: hidden;
 }
 
-.trans-item {
-    display: flex; justify-content: space-between; align-items: center;
-    background: rgba(255,255,255,0.03); 
-    padding: 20px; border-radius: 16px;
-    margin-bottom: 12px; 
-    border-left: 5px solid transparent;
-    transition: 0.3s;
-    border: 1px solid var(--border-glass);
+.tx-item {
+    display: flex; align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.2s;
 }
-.trans-item:hover {
-    background: rgba(255,255,255,0.06);
-    transform: translateX(5px);
+.tx-item:last-child { border-bottom: none; }
+.tx-item:hover { background: rgba(255,255,255,0.02); }
+
+.tx-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 15px; font-size: 1.1rem;
+}
+.bg-green { background: rgba(0, 255, 136, 0.15); color: #00ff88; }
+.bg-red { background: rgba(255, 68, 68, 0.15); color: #ff4444; }
+
+.tx-details { flex: 1; }
+.tx-details h4 { margin: 0 0 4px 0; font-weight: 500; color: #fff; font-size: 0.95rem; }
+.tx-details small { color: #6e7681; font-size: 0.8rem; }
+
+.tx-amount { font-weight: 600; font-size: 1rem; }
+
+/* --- MODAL --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: none; justify-content: center; align-items: center;
+}
+.modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+
+.modal-content {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%; max-width: 400px;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    transform: translateY(20px); animation: slideUp 0.3s forwards;
 }
 
-/* Status Colors */
-.trans-item.success { border-left-color: #00ff88; }
-.trans-item.pending { border-left-color: #ffd700; }
-.trans-item.failed { border-left-color: #ff4444; }
+.input-group {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 10px 15px;
+    display: flex; align-items: center;
+    margin-bottom: 25px;
+}
+.input-group span { font-size: 1.5rem; color: #888; margin-right: 10px; }
+.input-group input {
+    background: none; border: none; color: #fff;
+    font-size: 1.5rem; width: 100%; outline: none; font-weight: 600;
+}
 
-/* Status Text Glow */
-.trans-item.success h4 span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
-.trans-item.pending h4 span { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+.modal-actions { display: flex; gap: 10px; }
+.modal-actions button {
+    flex: 1; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; border: none;
+}
+.btn-cancel { background: transparent; color: #888; border: 1px solid #333 !important; }
+.btn-confirm { background: var(--neon-green); color: #000; display: flex; justify-content: center; align-items: center; gap: 8px;}
 
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
 
-/* --- MOBILE RESPONSIVENESS --- */
+/* Theme BG */
+.theme-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+/* Mobile */
 @media (max-width: 768px) {
-    .deposit-section { grid-template-columns: 1fr; gap: 30px; }
-    .balance-card h1 { font-size: 2.5rem; }
-    .qr-box img { max-width: 140px; }
-    .action-buttons { flex-direction: column; }
-    .btn-add, .btn-sub { width: 100%; justify-content: center; }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.active { transform: translateX(0); }
+    .main-content { margin-left: 0; padding: 20px; }
+    .menu-btn { display: block; }
+    .wallet-card { flex-direction: column; text-align: center; gap: 20px; }
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 999; }
+    .sidebar.active ~ .sidebar-overlay { display: block; }
 }
