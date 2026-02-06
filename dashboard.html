@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | NextEdu</title>
     <link rel="stylesheet" href="assets/css/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
 </head>
 
 <body>
-
+     
     <aside class="sidebar" id="sidebar">
         <div class="brand">
             <i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span>
@@ -68,7 +68,12 @@
                 <p>Global Rank</p>
                 <i class="fa-solid fa-trophy" style="position:absolute; bottom:20px; right:20px; font-size:2rem; opacity:0.1;"></i>
             </div>
-        </div> 
+            <div class="stat-card" id="plan-card">
+                <h3 id="stat-plan">LOADING...</h3>
+                <p>Current Plan</p>
+                <i class="fa-solid fa-id-card" style="position:absolute; bottom:20px; right:20px; font-size:2rem; opacity:0.1;"></i>
+            </div>
+        </div>
 
         <h2 class="section-title">Start Practice</h2>
         
@@ -104,6 +109,44 @@
 
         </div>
 
+       <h2 class="section-title" style="margin-top: 50px;">🏆 Target Exam Batches</h2>
+<div class="exam-grid">
+    
+    <div class="exam-card" onclick="openExamModal('bstc')">
+        <span class="exam-badge">LIVE</span>
+        <div class="exam-icon">🏫</div>
+        <h3>BSTC / Pre-DElEd</h3>
+        <p style="color:#888; font-size:0.9rem;">Teaching Aptitude, Hindi, English, GK</p>
+    </div>
+
+    <div class="exam-card" onclick="openExamModal('ptet')">
+        <span class="exam-badge" style="background:#bd00ff;">POPULAR</span>
+        <div class="exam-icon">🎓</div>
+        <h3>PTET 2026</h3>
+        <p style="color:#888; font-size:0.9rem;">B.Ed Entrance, Reasoning, GK</p>
+    </div>
+
+    <div class="exam-card" onclick="openExamModal('rpsc')">
+        <span class="exam-badge" style="background:#00f0ff; color:#000;">PRO</span>
+        <div class="exam-icon">🏛️</div>
+        <h3>RPSC Exams</h3>
+        <p style="color:#888; font-size:0.9rem;">Rajasthan Police, LDC, Patwar</p>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="examModal">
+    <div class="modal-content">
+        <h2 id="modalTitle">Select Subject</h2>
+        <p style="color:#777; margin-bottom: 20px;">Choose a subject to start practicing</p>
+        
+        <div id="modalSubjects">
+            </div>
+
+        <button onclick="closeExamModal()" style="margin-top: 20px; background: none; border: none; color: #777; cursor: pointer;">Close</button>
+    </div>
+</div>
+
     </main>
 
     <div style="position:fixed; top:-20%; right:-10%; width:500px; height:500px; background:radial-gradient(circle, rgba(0,255,225,0.08), transparent 70%); border-radius:50%; pointer-events:none; z-index:-1; animation: float 10s infinite ease-in-out;"></div>
@@ -119,6 +162,60 @@
         function startQuiz(subject) {
             window.location.href = `quiz.html?sub=${subject}`;
         }
+
+        // Exam Modal
+
+        function openExamModal(exam) {
+        const modal = document.getElementById('examModal');
+        const list = document.getElementById('modalSubjects');
+        const title = document.getElementById('modalTitle');
+        
+        title.innerText = exam.toUpperCase() + " Subjects";
+        list.innerHTML = "";
+
+        // Define Subjects per Exam
+        const subjects = {
+            'bstc': [
+                {id: 'teaching_aptitude', name: '👨‍🏫 Teaching Aptitude'},
+                {id: 'gk', name: '🕌 Rajasthan GK'},
+                {id: 'hindi', name: '🕉️ Hindi'},
+                {id: 'english', name: '🅰️ English'},
+                {id: 'reasoning', name: '🧠 Reasoning'}
+            ],
+            'ptet': [
+                {id: 'reasoning', name: '🧠 Reasoning'},
+                {id: 'teaching_aptitude', name: '👨‍🏫 Teaching Aptitude'},
+                {id: 'gk', name: '🌍 General Awareness'},
+                {id: 'hindi', name: '🕉️ Hindi'}
+            ],
+            'rpsc': [
+                {id: 'gk', name: '🕌 Rajasthan GK'},
+                {id: 'science', name: '🔬 General Science'},
+                {id: 'maths', name: '➗ Mathematics'}
+            ]
+        };
+
+        // Generate Buttons
+        if(subjects[exam]) {
+            subjects[exam].forEach(sub => {
+                list.innerHTML += `<button class="sub-btn" onclick="startExamQuiz('${exam}', '${sub.id}')">
+                    <span>${sub.name}</span> <i class="fa-solid fa-chevron-right"></i>
+                </button>`;
+            });
+        }
+
+        modal.classList.add('active');
+    }
+
+    function closeExamModal() {
+        document.getElementById('examModal').classList.remove('active');
+    }
+
+    function startExamQuiz(exam, subject) {
+        // Redirect to quiz page with BOTH exam and subject params
+        window.location.href = `quiz.html?exam=${exam}&sub=${subject}`;
+    }
+    
     </script>
 
     <link rel="stylesheet" href="assets/css/ask_ai.css">
@@ -140,8 +237,11 @@
             <button class="ai-send" onclick="askGemini()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
+ 
 
     <script src="assets/js/dashboard.js"></script>
     <script src="assets/js/ask_ai.js"></script> 
 </body>
 </html> 
+
+ 

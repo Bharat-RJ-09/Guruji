@@ -4,7 +4,7 @@
 const API_SECURE = "api/secure";
 const API_LB = "api/quiz";
 const API_AUTH = "api/auth";
-const API_HIST = "api/quiz"; // Base path for history
+const API_HIST = "api/quiz"; 
 
 // ✅ Run immediately when page loads
 document.addEventListener("DOMContentLoaded", () => {
@@ -18,25 +18,50 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. LEADERBOARD Page Checks
     if (document.getElementById("lb-body")) {
         loadLeaderboard();
+        // We still load profile to get the theme/nav bar info if needed
+        loadProfile(); 
     }
 
-    // 3. HISTORY Page Checks (This was likely missing!)
+    // 3. HISTORY Page Checks
     if (document.getElementById("history-body")) {
         loadHistory();
+        loadProfile();
+    }
+
+    // 4. ✨ CHECK FOR UPGRADE CELEBRATION (Runs on Dashboard only)
+    const urlParams = new URLSearchParams(window.location.search);
+    const newPlan = urlParams.get('upgrade_success');
+    if(newPlan) {
+        showCelebration(newPlan);
     }
 });
 
-// --- PROFILE LOGIC ---
+// --- PROFILE LOGIC (Updated with Themes & Plans) ---
 async function loadProfile() {
     try {
         const res = await fetch(`${API_SECURE}/profile.php`);
         if (res.status === 401) { window.location.href = "login.html"; return; }
+        
         const data = await res.json();
+        
         if (data.status === "success") {
+            // A. Update Names
             const nameEl = document.getElementById("welcomeName");
             const userEl = document.getElementById("userDisplay");
+            
             if(nameEl) nameEl.innerHTML = data.user.full_name;
             if(userEl) userEl.innerText = "@" + data.user.username;
+
+            // B. ✨ APPLY THEME (Visual Tier)
+            // We pass the plan to the theme engine
+            if(data.user.subscription_plan) {
+                applyTheme(data.user.subscription_plan);
+                
+                // C. ✨ UPDATE PLAN CARD (Only if on Dashboard)
+                if(document.getElementById("stat-plan")) {
+                    updatePlanDisplay(data.user.subscription_plan);
+                }
+            }
         }
     } catch (error) { console.error("Profile Error:", error); }
 }
@@ -50,6 +75,7 @@ async function loadStats() {
             const scoreEl = document.getElementById("stat-score");
             const playedEl = document.getElementById("stat-played");
             const rankEl = document.getElementById("stat-rank");
+            
             if(scoreEl) scoreEl.innerText = data.stats.score || 0;
             if(playedEl) playedEl.innerText = data.stats.played || 0;
             if(rankEl) rankEl.innerText = "#" + (data.stats.rank || "--");
@@ -134,6 +160,85 @@ async function loadHistory() {
         console.error(e);
         tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Server Error</td></tr>`;
     }
+}
+
+// =========================================
+// ✨ VISUAL TIER SYSTEM (MERGED FEATURES)
+// =========================================
+
+// 1. APPLY THEME (Safely)
+function applyTheme(plan) {
+    const body = document.body;
+    const bgContainer = document.getElementById("theme-bg"); // Might be null on some pages
+
+    // Clear old classes
+    body.classList.remove("theme-standard", "theme-prime");
+
+    // Only touch HTML if the container exists (Prevents crashing on other pages)
+    if (bgContainer) bgContainer.innerHTML = ""; 
+
+    if (plan === 'standard') {
+        body.classList.add("theme-standard");
+    } 
+    else if (plan === 'prime') {
+        body.classList.add("theme-prime");
+        
+        // 👑 PRIME: Lottie Animation
+        if (bgContainer) {
+            bgContainer.innerHTML = `
+                <lottie-player 
+                    src="https://assets2.lottiefiles.com/packages/lf20_w51pcehl.json"  
+                    background="transparent"  
+                    speed="0.5"  
+                    style="width: 100%; height: 100%; opacity: 0.3;"  
+                    loop  
+                    autoplay>
+                </lottie-player>
+            `;
+        }
+    }
+}
+
+// 2. UPDATE PLAN DISPLAY TEXT (Safely)
+function updatePlanDisplay(plan) {
+    const el = document.getElementById("stat-plan");
+    const card = document.getElementById("plan-card");
+
+    if (!el || !card) return; // Exit if elements don't exist
+
+    if (plan === 'prime') {
+        el.innerHTML = "PRIME <span style='font-size:1.5rem'>👑</span>";
+        el.style.color = "#ffd700"; 
+        card.style.borderColor = "#ffd700"; 
+    } else if (plan === 'standard') {
+        el.innerHTML = "STANDARD <span style='font-size:1.5rem'>⚡</span>";
+        el.style.color = "#00f0ff"; 
+        card.style.borderColor = "#00f0ff";
+    } else {
+        el.innerHTML = "FREE";
+        el.style.color = "#a0aec0"; 
+    }
+}
+
+// 3. SHOW CELEBRATION MODAL
+function showCelebration(plan) {
+    const modal = document.getElementById("celebration-modal");
+    const title = document.getElementById("cel-title");
+    const msg = document.getElementById("cel-msg");
+
+    if (!modal) return; // Safety check
+
+    if(plan === 'prime') {
+        title.innerText = "Welcome, King! 👑";
+        title.style.color = "#ffd700";
+        msg.innerText = "Prime features are now UNLOCKED.";
+    } else {
+        title.innerText = "Level Up! ⚡";
+        title.style.color = "#00f0ff";
+        msg.innerText = "You are now a Standard Member.";
+    }
+
+    modal.classList.add("active");
 }
 
 // --- UTILS ---

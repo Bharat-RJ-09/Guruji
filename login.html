@@ -5,33 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | NextEdu</title>
     <link rel="stylesheet" href="assets/css/auth.css">
+    <style>
+        .password-container { position: relative; }
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-muted);
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+        .toggle-password:hover { opacity: 1; color: var(--primary-glow); }
+        
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            color: var(--text-muted);
+        }
+        .remember-me { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .remember-me input { accent-color: var(--primary); }
+    </style>
 </head>
 <body>
     <div class="glow-bg"></div>
 
     <div class="auth-card">
         <h2>Welcome Back</h2>
-        <p>Login to continue learning 📚</p>
+        
+        <div id="telegram-login-container" style="text-align: center; margin-bottom: 20px;">
+            <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                    data-telegram-login="NextEdu_verifier_bot" 
+                    data-size="large" 
+                    data-radius="10" 
+                    data-onauth="onTelegramLogin(user)" 
+                    data-request-access="write"></script>
+            <p style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">👆 One-click Login</p>
+        </div>
+
+        <div class="divider">OR MANUAL</div>
 
         <div id="msgBox" class="message-box"></div>
 
         <form id="loginForm">
             <div class="input-group">
                 <label>Username or Email</label>
-                <input type="text" id="login_id" required placeholder="Enter username or email">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="password" required placeholder="••••••">
+                <input type="text" id="login_id" required autocomplete="username">
             </div>
             
+            <div class="input-group password-container">
+                <label>Password</label>
+                <input type="password" id="password" required autocomplete="current-password">
+                <span class="toggle-password" onclick="togglePasswordVisibility()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </span>
+            </div>
+            
+            <div class="options-row">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe"> Remember me
+                </label>
+                <a href="forgot-password.html" class="auth-link" style="margin-top: 0; font-size: 0.85rem;">Forgot Password?</a>
+            </div>
+
             <button type="submit" class="btn-primary" id="submitBtn">Login</button>
         </form>
 
-        <a href="forgot-password.html" class="auth-link" style="font-size: 0.8rem; margin-top: 10px;">Forgot Password?</a>
         <a href="signup.html" class="auth-link">New here? <span>Create Account</span></a>
     </div>
 
     <script src="assets/js/auth.js"></script>
+
+    <script>
+        // 1. Telegram Callback (Fixed & Cleaned)
+        function onTelegramLogin(user) {
+            fetch('api/auth/login.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ telegram_user: user })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success'){
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => alert("Network Error: " + err));
+        }
+
+        // 2. Toggle Password Visibility
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('password');
+            const icon = document.querySelector('.toggle-password svg');
+            
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                // Switch to "Eye Off" icon
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M1 1l22 22"></path>';
+            } else {
+                passInput.type = 'password';
+                // Switch to "Eye" icon
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
+    </script>
 </body>
 </html>

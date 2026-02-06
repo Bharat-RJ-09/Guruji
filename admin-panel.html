@@ -7,28 +7,18 @@
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Admin Specific Overrides */
         body { background: #050505; }
         .sidebar { border-right: 1px solid #222; background: #0a0a0a; }
         .stat-card { background: #111; border: 1px solid #333; }
-        
         .tab-nav { display: flex; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .tab-btn { background: none; border: none; color: #777; font-size: 1.1rem; cursor: pointer; padding: 10px; transition: 0.3s; }
         .tab-btn.active { color: #00f0ff; border-bottom: 2px solid #00f0ff; }
-        
         .section { display: none; animation: fadeIn 0.5s; }
         .section.active { display: block; }
-
-        /* Tables */
         .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .admin-table th { text-align: left; color: #777; padding: 15px; border-bottom: 1px solid #333; }
         .admin-table td { padding: 15px; border-bottom: 1px solid #222; color: #ddd; }
-        
-        /* Inputs */
         .admin-inp { background: #111; border: 1px solid #333; color: #fff; padding: 10px; width: 100px; text-align: center; }
-        
-        /* File List */
-        .file-item { display: flex; justify-content: space-between; background: #111; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #333; }
     </style>
 </head>
 <body>
@@ -47,21 +37,15 @@
         <div class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
             <button class="tab-btn" onclick="switchTab('users')">User Management</button>
-            <button class="tab-btn" onclick="switchTab('pricing')">Subscription & Pricing</button>
-            <button class="tab-btn" onclick="switchTab('files')">Quiz Files (JSON)</button>
+            <button class="tab-btn" onclick="switchTab('pricing')">Pricing</button>
+            <button class="tab-btn" onclick="switchTab('files')">Upload Questions</button>
         </div>
 
         <div id="overview" class="section active">
             <div class="stats-grid">
-                <div class="stat-card">
-                    <h3 id="st-users">0</h3> <p>Total Users</p>
-                </div>
-                <div class="stat-card" style="border-color:#bd00ff;">
-                    <h3 id="st-prime" style="color:#bd00ff;">0</h3> <p>Prime Members</p>
-                </div>
-                <div class="stat-card" style="border-color:#00ff88;">
-                    <h3 id="st-rev" style="color:#00ff88;">₹0</h3> <p>Total Revenue</p>
-                </div>
+                <div class="stat-card"><h3 id="st-users">0</h3> <p>Total Users</p></div>
+                <div class="stat-card" style="border-color:#bd00ff;"><h3 id="st-prime" style="color:#bd00ff;">0</h3> <p>Prime Members</p></div>
+                <div class="stat-card" style="border-color:#00ff88;"><h3 id="st-rev" style="color:#00ff88;">₹0</h3> <p>Total Revenue</p></div>
             </div>
         </div>
 
@@ -89,19 +73,39 @@
             </div>
         </div>
 
-        <div id="files" class="section">
-            <div style="margin-bottom:20px; border:1px dashed #555; padding:20px; text-align:center;">
-                <p style="color:#aaa;">Upload Updated JSON File</p>
-                <input type="file" id="jsonUpload" accept=".json" style="color:#fff;">
-                <button onclick="uploadFile()" style="background:#0f0; border:none; padding:10px 20px; cursor:pointer;">Upload & Replace</button>
+        <div id="files" class="section"> 
+            <div class="upload-box" style="border: 2px dashed #333; padding: 40px; border-radius: 20px; text-align: center; background: rgba(255,255,255,0.02);">
+                <h2 style="color:#fff; margin-bottom:20px;">☁️ Upload Question Bank (CSV)</h2>
+                
+                <select id="uploadExam" class="admin-inp" style="width: 200px; margin-bottom: 10px; text-align: left;">
+                    <option value="general">🌍 General Practice</option>
+                    <option value="bstc">🏫 BSTC Exam</option>
+                    <option value="ptet">🎓 PTET Exam</option>
+                    <option value="rpsc">🏛️ RPSC Exam</option>
+                </select>
+
+                <select id="uploadSubject" class="admin-inp" style="width: 200px; margin-bottom: 20px; text-align: left;">
+                    <option value="english">🅰️ English</option>
+                    <option value="hindi">🕉️ Hindi</option>
+                    <option value="gk">🕌 GK</option>
+                    <option value="reasoning">🧠 Reasoning</option>
+                    <option value="teaching_aptitude">👨‍🏫 Teaching Aptitude</option>
+                    <option value="science">🔬 Science</option>
+                    <option value="maths">➗ Maths</option>
+                </select>
+                <br>
+                <input type="file" id="csvFile" accept=".csv" style="color:#fff; margin-bottom: 20px;">
+                <br>
+                <button onclick="uploadQuestions()" style="background: linear-gradient(90deg, #00f0ff, #007bff); border: none; padding: 12px 30px; color: #000; font-weight: bold; border-radius: 50px; cursor: pointer;">
+                    🚀 Upload to Database
+                </button>
+                <p id="uploadStatus" style="margin-top: 15px; color: #aaa;"></p>
             </div>
-            <div id="file-list"></div>
-        </div>
+        </div> 
 
     </main>
 
     <script>
-        // --- LOGIC ---
         const API = "api/admin";
 
         window.onload = loadData;
@@ -114,79 +118,71 @@
         }
 
         async function loadData() {
-            const res = await fetch(`${API}/data.php`);
-            const data = await res.json();
-            
-            if(data.status === 'error') window.location.href = 'admin-login.html';
+            try {
+                const res = await fetch(`${API}/data.php`);
+                const data = await res.json();
+                
+                // If not logged in, redirect
+                if(data.status === 'error' && data.message === 'Unauthorized') {
+                     window.location.href = 'admin-login.html';
+                     return;
+                }
 
-            // Stats
-            document.getElementById('st-users').innerText = data.stats.total_users;
-            document.getElementById('st-prime').innerText = data.stats.prime_users;
-            document.getElementById('st-rev').innerText = "₹" + data.stats.revenue;
-
-            // Users
-            const userList = document.getElementById('user-list');
-            userList.innerHTML = "";
-            data.users.forEach(u => {
-                userList.innerHTML += `<tr>
-                    <td>#${u.id}</td>
-                    <td>${u.full_name}<br><small style="color:#555;">${u.email}</small></td>
-                    <td><span style="color:${u.subscription_plan==='prime'?'#bd00ff':'#fff'}">${u.subscription_plan}</span></td>
-                    <td>₹${u.balance}</td>
-                    <td><button style="color:red; background:none; border:none; cursor:pointer;">Block</button></td>
-                </tr>`;
-            });
-
-            // Prices
-            document.getElementById('price-standard').value = data.prices.standard;
-            document.getElementById('price-prime').value = data.prices.prime;
-
-            loadFiles();
+                if(data.stats) {
+                    document.getElementById('st-users').innerText = data.stats.total_users;
+                    document.getElementById('st-prime').innerText = data.stats.prime_users;
+                    document.getElementById('st-rev').innerText = "₹" + data.stats.revenue;
+                }
+                
+                if(data.users) {
+                    const userList = document.getElementById('user-list');
+                    userList.innerHTML = "";
+                    data.users.forEach(u => {
+                        userList.innerHTML += `<tr>
+                            <td>#${u.id}</td>
+                            <td>${u.full_name}<br><small style="color:#555;">${u.email}</small></td>
+                            <td><span style="color:${u.subscription_plan==='prime'?'#bd00ff':'#fff'}">${u.subscription_plan}</span></td>
+                            <td>₹${u.balance}</td>
+                            <td><button style="color:red; background:none; border:none; cursor:pointer;">Block</button></td>
+                        </tr>`;
+                    });
+                }
+            } catch(e) { console.error("Admin Load Error", e); }
         }
 
-        // --- PRICING ---
-        async function savePrice(type) {
-            const val = document.getElementById(`price-${type}`).value;
-            await fetch(`${API}/update_price.php`, {
-                method: 'POST', body: JSON.stringify({ key: type, value: val })
-            });
-            alert("Price Updated!");
-        }
+        async function uploadQuestions() {
+            const file = document.getElementById('csvFile').files[0];
+            const exam = document.getElementById('uploadExam').value;
+            const subject = document.getElementById('uploadSubject').value;
 
-        // --- FILES ---
-        async function loadFiles() {
-            const formData = new FormData(); formData.append('action', 'list');
-            const res = await fetch(`${API}/manage_files.php`, { method: 'POST', body: formData });
-            const data = await res.json();
-            
-            const list = document.getElementById('file-list');
-            list.innerHTML = "";
-            data.files.forEach(f => {
-                list.innerHTML += `<div class="file-item">
-                    <span style="color:#fff;">📄 ${f}</span>
-                    <a href="assets/json/${f}" download style="color:#00f0ff;">Download</a>
-                </div>`;
-            });
-        }
-
-        async function uploadFile() {
-            const file = document.getElementById('jsonUpload').files[0];
-            if(!file) return alert("Select a file");
+            if (!file) return alert("Please select a CSV file!");
 
             const formData = new FormData();
-            formData.append('action', 'upload');
-            formData.append('file', file);
+            formData.append('csv_file', file);
+            formData.append('exam', exam);
+            formData.append('subject', subject);
 
-            const res = await fetch(`${API}/manage_files.php`, { method: 'POST', body: formData });
-            const data = await res.json();
-            alert(data.message);
-            loadFiles();
+            document.getElementById('uploadStatus').innerText = "Uploading... ⏳";
+
+            try {
+                const res = await fetch('api/admin/upload.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    document.getElementById('uploadStatus').innerHTML = `<span style="color:#0f0">✅ Success! Added ${data.count} questions.</span>`;
+                } else {
+                    document.getElementById('uploadStatus').innerText = "❌ " + data.message;
+                }
+            } catch (e) { 
+                document.getElementById('uploadStatus').innerText = "❌ Upload Error";
+                console.error(e);
+            }
         }
         
         function logoutAdmin() {
-             // In real app destroy session via API, here redirect
+             // In a real app, hit an API to destroy session
              window.location.href = 'admin-login.html';
-        }
+        } 
     </script>
 </body>
 </html>
