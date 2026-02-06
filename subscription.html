@@ -3,26 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upgrade Plan | NextEdu</title>
+    <title>Upgrade Plan | NextEdu</title> 
+    
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/subscription.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
 <body>
 
     <aside class="sidebar" id="sidebar">
-        <div class="brand"><i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span></div>
-        <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
-        <a href="wallet.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Wallet Balance: <span id="nav-bal" style="color:var(--neon-green)">Loading..</span></a>
+        <div class="brand">
+            <i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span>
+        </div>
+
+        <a href="dashboard.html" class="nav-item "><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="leaderboard.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+        <a href="history.html" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+
+        <a href="wallet.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Wallet</a>
+        <a href="subscription.html" class="nav-item active" style="color: #ffd700;"><i class="fa-solid fa-crown"></i>
+            Upgrade</a>
+
+        <a href="profile.html" class="nav-item"><i class="fa-solid fa-user-gear"></i> Profile</a>
+
+        <div style="margin-top: auto;">
+            <a href="#" onclick="logout()" class="nav-item" style="color: #ff4444;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </a>
+            <br>
+        </div>
     </aside>
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <main class="main-content">
         <header class="header">
-            <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <button class="menu-btn" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
             <div class="welcome">
-                <h1>🚀 Level Up Your Learning</h1>
-                <p>Choose a plan that fits your ambition.</p>
+                <h1>🚀 Upgrade Your Plan</h1>
+                <p>Choose the best plan for your success.</p>
+            </div>
+            
+            <div onclick="window.location='wallet.html'" style="margin-left:auto; background:rgba(255,255,255,0.1); padding:8px 15px; border-radius:50px; cursor:pointer; border:1px solid rgba(255,255,255,0.2);">
+                <i class="fa-solid fa-wallet" style="color:#00ff88;"></i> <span id="nav-bal" style="font-weight:bold; color:#fff;">₹...</span>
             </div>
         </header>
 
@@ -35,10 +61,10 @@
                 <p>For casual learners</p>
                 <hr>
                 <ul class="features">
-                    <li><i class="fa-solid fa-check"></i> 3 Quizzes per Day</li>
+                    <li><i class="fa-solid fa-check"></i> 5 Quizzes per Day</li>
                     <li><i class="fa-solid fa-check"></i> Basic Leaderboard</li>
                     <li class="disabled"><i class="fa-solid fa-xmark"></i> AI Tutor Support</li>
-                    <li class="disabled"><i class="fa-solid fa-xmark"></i> Detailed Analytics</li>
+                    <li class="disabled"><i class="fa-solid fa-xmark"></i> Gold Theme</li>
                 </ul>
                 <button class="btn-plan disabled">Active Plan</button>
             </div>
@@ -46,12 +72,12 @@
             <div class="price-card standard">
                 <div class="badge-area" style="background:#00f0ff; color:#000;">POPULAR</div>
                 <h3>Standard</h3>
-                <div class="price">₹199<span>/mo</span></div>
+                <div class="price">₹99<span>/mo</span></div>
                 <p>For serious students</p>
                 <hr>
                 <ul class="features">
-                    <li><i class="fa-solid fa-check" style="color:#00f0ff"></i> <b>10 Quizzes per Day</b></li>
-                    <li><i class="fa-solid fa-check" style="color:#00f0ff"></i> Access to all Subjects</li>
+                    <li><i class="fa-solid fa-check" style="color:#00f0ff"></i> <b>20 Quizzes per Day</b></li>
+                    <li><i class="fa-solid fa-check" style="color:#00f0ff"></i> All Subjects Unlocked</li>
                     <li><i class="fa-solid fa-check" style="color:#00f0ff"></i> Priority Support</li>
                     <li class="disabled"><i class="fa-solid fa-xmark"></i> AI Tutor Support</li>
                 </ul>
@@ -60,24 +86,36 @@
 
             <div class="price-card prime">
                 <div class="badge-area" style="background:#bd00ff; color:#fff;">BEST VALUE</div>
-                <div class="glow-effect"></div>
-                <h3>👑 Prime Batch</h3>
-                <div class="price">₹499<span>/mo</span></div>
-                <p>Unlimited access & AI Power</p>
+                
+                <div style="position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:100px;">
+                    <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_touohxv0.json" background="transparent" speed="1" loop autoplay></lottie-player>
+                </div>
+
+                <h3 style="margin-top:20px;">👑 Prime Batch</h3>
+                <div class="price">₹199<span>/mo</span></div>
+                <p>Unlimited Power</p>
                 <hr>
                 <ul class="features">
                     <li><i class="fa-solid fa-infinity" style="color:#bd00ff"></i> <b>Unlimited Quizzes</b></li>
                     <li><i class="fa-solid fa-robot" style="color:#bd00ff"></i> <b>Gemini AI Tutor</b></li>
-                    <li><i class="fa-solid fa-chart-pie" style="color:#bd00ff"></i> Deep Performance Analytics</li>
-                    <li><i class="fa-solid fa-crown" style="color:#bd00ff"></i> VIP Badge on Leaderboard</li>
+                    <li><i class="fa-solid fa-wand-magic-sparkles" style="color:#bd00ff"></i> <b>Royal Gold Theme</b></li>
+                    <li><i class="fa-solid fa-chart-line" style="color:#bd00ff"></i> Deep Analytics</li>
                 </ul>
                 <button class="btn-plan btn-prime" onclick="buyPlan('prime')">Get Prime Access</button>
             </div>
-
         </div>
 
     </main>
 
-    <script src="assets/js/dashboard.js"></script> <script src="assets/js/subscription.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/subscription.js"></script>
+    <script>
+        function toggleSidebar() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+        }
+        function logout() {
+            if(confirm("Logout?")) window.location.href = 'api/auth/logout.php';
+        }
+    </script>
 </body>
 </html>

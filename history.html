@@ -3,29 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My History | NextEdu</title> 
+    <title>History | NextEdu</title>
     <link rel="stylesheet" href="assets/css/history.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
 </head>
 <body>
+
+    <div id="theme-bg" class="theme-background"></div>
 
     <aside class="sidebar" id="sidebar">
         <div class="brand">
             <i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span>
         </div>
 
-        <a href="dashboard.html" class="nav-item  "><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-        <a href="leaderboard.html" class="nav-item  "><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+        <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="leaderboard.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
         <a href="history.html" class="nav-item active"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+        
         <a href="wallet.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Wallet</a>
-        <a href="subscription.html" class="nav-item" style="color: #ffd700;"><i class="fa-solid fa-crown"></i> Upgrade</a>
+        <a href="subscription.html" class="nav-item" style="color:var(--neon-gold);"><i class="fa-solid fa-crown"></i> Upgrade</a>
+        
         <a href="profile.html" class="nav-item"><i class="fa-solid fa-user-gear"></i> Profile</a>
 
         <div style="margin-top: auto;">
             <a href="#" onclick="logout()" class="nav-item" style="color: #ff4444;">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
             </a>
-            <br> <br>
+            <br>
         </div>
     </aside>
 
@@ -35,13 +42,20 @@
         <header class="header">
             <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
             <div class="welcome">
-                <h1>📜 Quiz History</h1>
-                <p>Check your past performance</p>
+                <h1>📜 Your Journey</h1>
+                <p>Track your improvement over time.</p>
             </div>
         </header>
 
-        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; overflow-x: auto;">
-            <table class="hist-table">
+        <div class="chart-container" style="background: rgba(22, 27, 34, 0.7); padding: 20px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 15px; color: #8b949e; font-size: 1rem;">📈 Performance Analysis (Last 10 Quizzes)</h3>
+            <div style="height: 300px; width: 100%;">
+                <canvas id="historyChart"></canvas>
+            </div>
+        </div>
+
+        <div class="history-container">
+            <table>
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -51,10 +65,11 @@
                     </tr>
                 </thead>
                 <tbody id="history-body">
-                    <tr><td colspan="4" style="text-align:center;">Loading...</td></tr>
+                    <tr><td colspan="4" style="text-align:center;">Loading History...</td></tr>
                 </tbody>
             </table>
         </div>
+
     </main>
 
     <script src="assets/js/dashboard.js"></script>

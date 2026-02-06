@@ -1,0 +1,98 @@
+/* assets/css/admin.css */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;700&display=swap');
+
+:root {
+    --bg-dark: #0d1117;
+    --sidebar-bg: #161b22;
+    --card-bg: #21262d;
+    --border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #00f0ff;
+    --neon-green: #238636;
+    --text-main: #c9d1d9;
+}
+
+body {
+    background-color: var(--bg-dark); color: var(--text-main);
+    font-family: 'Outfit', sans-serif; margin: 0; display: flex;
+}
+
+/* --- LOGIN PAGE --- */
+.login-body {
+    height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at center, #1f2937 0%, #0d1117 100%);
+}
+.login-container {
+    background: var(--sidebar-bg); padding: 40px; border-radius: 20px;
+    border: 1px solid var(--border); width: 100%; max-width: 400px;
+    text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.login-header i { font-size: 3rem; color: var(--neon-blue); margin-bottom: 10px; }
+.login-header h1 { margin: 10px 0 5px; color: #fff; }
+.login-header p { color: #8b949e; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 30px; }
+
+.input-group {
+    background: var(--bg-dark); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; display: flex; align-items: center; margin-bottom: 15px;
+}
+.input-group i { color: #8b949e; margin-right: 10px; }
+.input-group input {
+    background: transparent; border: none; color: #fff; width: 100%; outline: none;
+}
+.toggle-pass { cursor: pointer; }
+
+.btn-login {
+    width: 100%; padding: 12px; background: var(--neon-blue); color: #000;
+    font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s;
+}
+.btn-login:hover { box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
+.error-msg { color: #ff4444; font-size: 0.9rem; margin-top: 15px; opacity: 0; transition: 0.3s; }
+
+/* --- DASHBOARD --- */
+.sidebar {
+    width: 260px; height: 100vh; background: var(--sidebar-bg); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; padding: 20px; position: fixed;
+}
+.brand { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 40px; }
+.brand span { color: var(--neon-blue); }
+
+.nav-link {
+    display: flex; align-items: center; gap: 15px; padding: 12px;
+    color: #8b949e; text-decoration: none; border-radius: 8px; margin-bottom: 5px; transition: 0.2s;
+}
+.nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.05); color: #fff; }
+.badge { background: #ff4444; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-left: auto; }
+
+.btn-logout {
+    margin-top: auto; background: transparent; border: 1px solid #ff4444; color: #ff4444;
+    padding: 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-logout:hover { background: #ff4444; color: #fff; }
+
+.main-content { margin-left: 260px; padding: 30px; width: 100%; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+h2 { margin: 0; color: #fff; }
+
+.status-indicator {
+    background: rgba(35, 134, 54, 0.2); color: #3fb950; padding: 5px 12px;
+    border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 8px;
+}
+.dot { width: 8px; height: 8px; background: #3fb950; border-radius: 50%; box-shadow: 0 0 10px #3fb950; }
+
+/* STATS GRID */
+.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+.stat-card {
+    background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+}
+.stat-card h3 { margin: 0; font-size: 0.9rem; color: #8b949e; }
+.stat-card h1 { margin: 10px 0 0; font-size: 2rem; color: #fff; }
+.icon-bg {
+    position: absolute; bottom: -10px; right: -10px; font-size: 4rem; opacity: 0.1; transform: rotate(-15deg);
+}
+
+.stat-card.blue { border-top: 4px solid #00f0ff; }
+.stat-card.green { border-top: 4px solid #238636; }
+.stat-card.purple { border-top: 4px solid #a371f7; }
+.stat-card.red { border-top: 4px solid #ff4444; }
+
+.card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); padding: 20px; }

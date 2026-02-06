@@ -1,78 +1,73 @@
 <?php
-// 1. Session Start (Login yaad rakhne ke liye)
+// api/auth/login.php
 session_start();
+header("Content-Type: application/json");
 
-// 2. Error Reporting Off (Clean JSON)
-error_reporting(0);
-ini_set('display_errors', 0);
+include '../../config/db.php';
+include '../../config/telegram.php';
 
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
-
-// 3. Database Connection
-// Path check karlena (agar config folder me hai to ../../config/db.php)
-include '../../config/db.php'; 
-
-// 4. Data Receive
 $data = json_decode(file_get_contents("php://input"));
-if (is_null($data)) {
-    $data = (object) $_POST;
-}
+$ip_address = $_SERVER['REMOTE_ADDR'];
+$time_now   = date("d M Y, h:i A");
 
-if(!isset($data->username) || !isset($data->password)){
-    echo json_encode(["status" => "error", "message" => "Username/Email and Password required"]);
-    exit;
-}
+try {
+    // 1. Determine Method (Telegram Widget vs Password)
+    $user_row = null;
+    $login_method = "Password";
 
-$userInput = $data->username; // Ye Username ya Email kuch bhi ho sakta hai
-$password = $data->password;
-
-// 5. User Dhoondo (Username YA Email se)
-$sql = "SELECT id, full_name, username, password_hash, is_verified, role FROM users WHERE username = ? OR email = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ss", $userInput, $userInput);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if($result->num_rows === 0){
-    echo json_encode(["status" => "error", "message" => "User not found!"]);
-    exit;
-}
-
-$row = $result->fetch_assoc();
-
-// 6. Password Match Karo
-if(password_verify($password, $row['password_hash'])){
-    
-    // 7. Check: Kya Account Verified Hai?
-    if($row['is_verified'] == 0){
-        echo json_encode([
-            "status" => "error", 
-            "message" => "Account not verified! Please verify OTP first.",
-            "redirect" => "verify.html?email=" . $userInput // Redirect hint
-        ]);
-        exit;
+    if (isset($data->telegram_user)) {
+        $tg = $data->telegram_user;
+        $login_method = "Telegram Widget";
+        $stmt = $conn->prepare("SELECT * FROM users WHERE telegram_chat_id = ?");
+        $stmt->bind_param("s", $tg->id);
+    } else if (isset($data->username) && isset($data->password)) {
+        $userInput = $data->username;
+        $password = $data->password;
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
+        $stmt->bind_param("ss", $userInput, $userInput);
+    } else {
+        throw new Exception("Invalid Data");
     }
 
-    // ✅ SAB SAHI HAI - SESSION START
-    $_SESSION['user_id'] = $row['id'];
-    $_SESSION['username'] = $row['username'];
-    $_SESSION['full_name'] = $row['full_name'];
-    $_SESSION['role'] = $row['role']; // Admin ya Student
+    // Execute & Fetch
+    if(isset($stmt)){
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows === 0) throw new Exception("User not found!");
+        $user_row = $result->fetch_assoc();
+    }
 
-    echo json_encode([
-        "status" => "success", 
-        "message" => "Login Successful!",
-        "user" => [
-            "name" => $row['full_name'],
-            "role" => $row['role']
-        ]
-    ]);
+    // Verify Password (if manual login)
+    if ($login_method == "Password" && !password_verify($password, $user_row['password_hash'])) {
+        throw new Exception("Incorrect Password!");
+    }
 
-} else {
-    echo json_encode(["status" => "error", "message" => "Incorrect Password!"]);
+    // 2. Success Session
+    $_SESSION['user_id'] = $user_row['id'];
+    $_SESSION['username'] = $user_row['username'];
+    $_SESSION['role'] = $user_row['role'];
+
+    // 3. ✨ PROFESSIONAL LOGIN ALERT
+    if (!empty($user_row['telegram_chat_id'])) {
+        
+        // Format the DB timestamp (created_at) if it exists, else use "Unknown"
+        $created_on = isset($user_row['created_at']) ? date("d M Y", strtotime($user_row['created_at'])) : "N/A";
+        
+        $msg = "🔐 <b>New Login Detected</b>\n\n" .
+               "👤 <b>User:</b> {$user_row['full_name']} (@{$user_row['username']})\n" .
+               "📅 <b>Login Time:</b> $time_now\n" .
+               "🌍 <b>IP Address:</b> $ip_address\n" .
+               "🔑 <b>Method:</b> $login_method\n\n" .
+               "📜 <b>Account Stats:</b>\n" .
+               "🗓 <b>Member Since:</b> $created_on\n\n" .
+               "<i>If this wasn't you, please change your password immediately.</i>";
+               
+        sendTelegramMessage($user_row['telegram_chat_id'], $msg);
+    }
+
+    echo json_encode(["status" => "success", "message" => "Login Successful!"]);
+
+} catch (Exception $e) {
+    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 }
-
-$conn->close();
 ?>
