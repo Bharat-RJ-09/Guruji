@@ -1,173 +1,122 @@
 // assets/js/profile.js
 
-// ✅ FIX: Path relative to profile.html (which is in the root folder)
-const API_SECURE_PF = "api/secure"; 
+const API_PROFILE = "api/secure/profile.php";
+const API_STATS = "api/secure/stats.php";
+const API_AVATAR = "api/secure/update_avatar.php";
+const API_UPDATE_INFO = "api/secure/update_info.php";
 
-window.onload = async () => {
+// 🎭 12 Avatar Presets
+const AVATARS = {
+    'av1': 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
+    'av2': 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png',
+    'av3': 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png',
+    'av4': 'https://cdn-icons-png.flaticon.com/512/4140/4140051.png',
+    'av5': 'https://cdn-icons-png.flaticon.com/512/1999/1999625.png',
+    'av6': 'https://cdn-icons-png.flaticon.com/512/4140/4140055.png',
+    'av7': 'https://cdn-icons-png.flaticon.com/512/4140/4140040.png',
+    'av8': 'https://cdn-icons-png.flaticon.com/512/6997/6997662.png',
+    'av9': 'https://cdn-icons-png.flaticon.com/512/4140/4140072.png',
+    'av10': 'https://cdn-icons-png.flaticon.com/512/4140/4140061.png',
+    'av11': 'https://cdn-icons-png.flaticon.com/512/4140/4140076.png',
+    'av12': 'https://cdn-icons-png.flaticon.com/512/4140/4140053.png'
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadProfile();
+    loadStats();
+});
+
+// 1. Load Profile
+async function loadProfile() {
     try {
-        const res = await fetch(`${API_SECURE_PF}/profile.php`);
-        
-        // If not logged in, redirect to login page
-        if (res.status === 401) {
-            window.location.href = "login.html";
-            return;
-        }
-
+        const res = await fetch(API_PROFILE);
         const data = await res.json();
         
         if(data.status === "success") {
             const u = data.user;
-
-            // ------------------------------------------------
-            // 1. CHECK SUBSCRIPTION STATUS (Standard vs Pro)
-            // ------------------------------------------------
-            // Check if the user has the 'pro' plan in the database
-            if (u.subscription_plan === 'pro') {
-                
-                // A. Change Badge Text & Color
-                const planBadge = document.querySelector(".plan-badge");
-                const planName = document.getElementById("plan_name");
-                
-                if(planBadge) {
-                    planBadge.innerText = "VIP MEMBER";
-                    planBadge.style.background = "rgba(0, 255, 136, 0.2)";
-                    planBadge.style.color = "#00ff88";
-                    planBadge.style.borderColor = "#00ff88";
-                }
-
-                if(planName) {
-                    planName.innerHTML = "Pro Plan 💎";
-                    planName.style.textShadow = "0 0 15px rgba(0, 255, 136, 0.5)";
-                    planName.style.background = "linear-gradient(to right, #fff, #00ff88)";
-                    planName.style.webkitBackgroundClip = "text";
-                    planName.style.webkitTextFillColor = "transparent";
-                }
-
-                // B. Hide "Upgrade" Button and show Active status
-                const upgradeBtn = document.querySelector("button[onclick='upgradePlan()']");
-                if(upgradeBtn) {
-                    upgradeBtn.innerHTML = "<i class='fa-solid fa-check-circle'></i> Active";
-                    upgradeBtn.style.background = "#222";
-                    upgradeBtn.style.color = "#00ff88";
-                    upgradeBtn.disabled = true;
-                    upgradeBtn.style.cursor = "default";
-                }
-
-                // C. Unlock Features (Remove 'locked' class & update icons)
-                document.querySelectorAll(".pro-features li").forEach(li => {
-                    li.classList.remove("locked");
-                    li.style.opacity = "1";
-                    const icon = li.querySelector("i");
-                    if(icon) {
-                        icon.className = "fa-solid fa-circle-check";
-                        icon.style.color = "#00ff88";
-                    }
-                });
-            }
-
-            // ------------------------------------------------
-            // 2. FILL PERSONAL INFO FIELDS
-            // ------------------------------------------------
-            if(document.getElementById("p_username")) 
-                document.getElementById("p_username").value = "@" + (u.username || "User");
-
-            if(document.getElementById("p_fullname")) 
-                document.getElementById("p_fullname").value = u.full_name || "";
-
-            if(document.getElementById("p_email")) 
-                document.getElementById("p_email").value = u.email || "No Email";
-
-            // ------------------------------------------------
-            // 3. FORMAT & FILL DATE
-            // ------------------------------------------------
-            const dateField = document.getElementById("p_joined");
-            if(dateField) {
-                if(u.created_at) {
-                    const date = new Date(u.created_at);
-                    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-                    dateField.value = date.toLocaleDateString('en-US', options);
-                } else {
-                    dateField.value = "Recently Joined";
-                }
-            }
-
-            // ------------------------------------------------
-            // 4. UPDATE HEADER GREETING
-            // ------------------------------------------------
-            const headerName = document.querySelector(".welcome h1");
-            if(headerName && u.full_name) {
-                headerName.innerHTML = "Settings for <span style='color:var(--neon-blue)'>" + u.full_name.split(' ')[0] + "</span>";
-            }
-
-        } else {
-            console.error("Profile Load Failed:", data.message);
+            
+            // Fix "Loading..." logic
+            document.getElementById("user-fullname").innerText = u.full_name || "Unknown";
+            document.getElementById("edit_fullname").value = u.full_name || "";
+            document.getElementById("user-username").innerText = "@" + u.username;
+            
+            // Set Avatar (Default to av1 if null)
+            const avKey = u.avatar || 'av1';
+            document.getElementById("user-avatar-img").src = AVATARS[avKey] || AVATARS['av1'];
         }
-    } catch(e) {
-        console.error("Network/Server Error:", e);
-    }
-};
+    } catch(e) { console.error(e); }
+}
 
+// 2. Load Stats & Level
+async function loadStats() {
+    try {
+        const res = await fetch(API_STATS);
+        const data = await res.json();
+        
+        if(data.status === "success") {
+            const s = data.stats;
+            document.getElementById("lvl-num").innerText = s.level;
+            document.getElementById("xp-val").innerText = s.xp;
+            document.getElementById("xp-max").innerText = s.next_level_xp;
+            document.getElementById("xp-bar").style.width = s.progress + "%";
+            
+            if(s.level > 5) document.getElementById("lvl-badge").innerText = "Scholar 🎓";
+            if(s.level > 10) document.getElementById("lvl-badge").innerText = "Master 🛡️";
+        }
+    } catch(e) { console.error(e); }
+}
 
-// --- UPDATE NAME LOGIC ---
-async function updateProfile() {
-    const newName = document.getElementById("p_fullname").value;
-    const btn = document.querySelector("button[onclick='updateProfile()']");
-    const originalText = btn.innerText;
-
-    if(!newName) { alert("Name cannot be empty"); return; }
+// 3. Update Name (FIXED)
+async function updateProfileName() {
+    const name = document.getElementById("edit_fullname").value;
+    const btn = document.querySelector(".btn-save");
+    
+    if(!name) return alert("Name cannot be empty");
 
     btn.innerText = "Saving...";
     btn.disabled = true;
 
     try {
-        const res = await fetch(`${API_SECURE_PF}/update_info.php`, {
+        const res = await fetch(API_UPDATE_INFO, {
             method: "POST",
-            body: JSON.stringify({ full_name: newName })
+            headers: { "Content-Type": "application/json" }, // 🚨 THIS WAS MISSING
+            body: JSON.stringify({ full_name: name })
         });
         const result = await res.json();
-        
+
         if(result.status === "success") {
-            alert("✅ Profile Updated Successfully");
-            // Update the name in the header immediately
-            const headerName = document.querySelector(".welcome h1");
-            if(headerName) headerName.innerHTML = "Settings for <span style='color:var(--neon-blue)'>" + newName.split(' ')[0] + "</span>";
-        } else {
-            alert("❌ " + result.message);
-        }
-    } catch(e) { 
-        alert("Server Error: Check Console"); 
-    } finally {
-        btn.innerText = originalText;
-        btn.disabled = false;
-    }
-}
-
-
-// --- CHANGE PASSWORD LOGIC ---
-async function changePassword() {
-    const curr = document.getElementById("curr_pass").value;
-    const newP = document.getElementById("new_pass").value;
-
-    if(!curr || !newP) { alert("Please fill both password fields"); return; }
-
-    try {
-        const res = await fetch(`${API_SECURE_PF}/change_password.php`, {
-            method: "POST",
-            body: JSON.stringify({ current_pass: curr, new_pass: newP })
-        });
-        const result = await res.json();
-        
-        if(result.status === "success") {
-            alert("✅ Password Changed! Logging out for security...");
-            fetch('api/auth/logout.php').then(() => window.location.href = "login.html");
+            alert("✅ Name Updated!");
+            loadProfile(); // Refresh UI
         } else {
             alert("❌ " + result.message);
         }
     } catch(e) { alert("Server Error"); }
+    
+    btn.innerText = "Save Name";
+    btn.disabled = false;
 }
 
+// 4. Avatar Logic
+function openAvatarModal() { document.getElementById("avatarModal").classList.add("active"); }
+function closeAvatarModal() { document.getElementById("avatarModal").classList.remove("active"); }
 
-// --- UPGRADE PLAN PLACEHOLDER ---
-function upgradePlan() {
-    alert("🔒 Premium Gateway is currently in Sandbox Mode.");
+async function selectAvatar(key) {
+    // Optimistic UI Update
+    document.getElementById("user-avatar-img").src = AVATARS[key];
+    closeAvatarModal();
+
+    // Save to DB
+    try {
+        await fetch(API_AVATAR, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ avatar: key })
+        });
+    } catch(e) { alert("Failed to save avatar"); }
+}
+
+// 5. Support Bot
+function openSupportBot() {
+    // Replace with your actual Support Bot Username
+    window.open("https://t.me/NextEdu_Support_Bot", "_blank");
 }
