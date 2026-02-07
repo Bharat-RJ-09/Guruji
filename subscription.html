@@ -34,7 +34,20 @@
         </div>
     </aside>
 
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="brand" style="padding: 20px; font-size: 1.5rem; font-weight: bold; color: #00d29a;">
+            <i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; padding: 10px;">
+            <a href="dashboard.html" class="nav-item" style="padding: 10px; color: #555; text-decoration: none;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <a href="wallet.html" class="nav-item" style="padding: 10px; color: #555; text-decoration: none;">
+                <i class="fa-solid fa-wallet"></i> Wallet Balance: <span id="nav-bal" style="color:#00d29a;">Loading..</span>
+            </a>
+        </div>
+    </aside>
 
     <main class="main-content">
         <header class="header">
@@ -53,7 +66,6 @@
         </header>
 
         <div class="pricing-container">
-            
             <div class="price-card">
                 <div class="badge-area">CURRENT</div>
                 <h3>Free Starter</h3>
@@ -104,6 +116,7 @@
                 <button class="btn-plan btn-prime" onclick="buyPlan('prime')">Get Prime Access</button>
             </div>
         </div>
+ 
 
     </main>
 

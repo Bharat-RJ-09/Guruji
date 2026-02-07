@@ -119,4 +119,8 @@ async function selectAvatar(key) {
 function openSupportBot() {
     // Replace with your actual Support Bot Username
     window.open("https://t.me/NextEdu_Support_Bot", "_blank");
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8b68b696900ae7230e2a96e683c94de5596d2f43
