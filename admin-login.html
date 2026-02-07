@@ -3,35 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Access | NextEdu</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        body::-webkit-scrollbar { display: none; }
-        body { -ms-overflow-style: none; scrollbar-width: none; }
-        div{
-            box-shadow: 0 0 20px rgba(0,255,0,0.2);
-            border-radius: 10px;
-            
-        }
-    </style>
+    <title>Secure Admin Access | NextEdu</title>
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body style="background:#000; display:flex; justify-content:center; align-items:center; height:100vh;">
-    <div style="text-align:center; width:300px;">
-        <h1 style="color:#fff; font-family:monospace; margin-bottom:20px;">SYSTEM ACCESS</h1>
-        <input type="password" id="adminPass" placeholder="Enter Security Code" 
-            style="width:100%; padding:15px; background:#111; border:1px solid #333; color:#0f0; text-align:center; font-size:1.2rem; outline:none; letter-spacing:5px;">
-        <button onclick="login()" style="width:100%; padding:15px; margin-top:10px; background:#0f0; border:none; font-weight:bold; cursor:pointer;">UNLOCK</button>
+<body class="login-body">
+
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h1>God Mode</h1>
+            <p>2-Factor Authentication Active</p>
+        </div>
+
+        <form id="auth-form" onsubmit="event.preventDefault(); startLogin();">
+            <div class="input-group">
+                <i class="fa-solid fa-user-astronaut"></i>
+                <input type="text" id="username" placeholder="Admin ID" required>
+            </div>
+            
+            <div class="input-group">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" id="password" placeholder="Access Key" required>
+            </div>
+
+            <button type="submit" class="btn-login" id="btn-auth">
+                Verify Credentials <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <form id="otp-form" style="display:none;" onsubmit="event.preventDefault(); verifyCode();">
+            <div class="alert-box">
+                <i class="fa-brands fa-telegram"></i> OTP sent to Telegram
+            </div>
+
+            <div class="input-group">
+                <input type="number" id="otp-code" placeholder="Enter 6-Digit Code" 
+                       style="text-align:center; font-size:1.5rem; letter-spacing:5px; font-weight:bold;">
+            </div>
+
+            <button type="submit" class="btn-login" id="btn-otp">
+                Unlock System <i class="fa-solid fa-lock-open"></i>
+            </button>
+        </form>
+
+        <p id="msg" class="error-msg"></p>
     </div>
 
     <script>
-        async function login() {
-            const pass = document.getElementById('adminPass').value;
-            const res = await fetch('api/admin/login.php', {
-                method: 'POST', body: JSON.stringify({ password: pass })
-            });
-            const data = await res.json();
-            if(data.status === 'success') window.location.href = 'admin-panel.html';
-            else alert("ACCESS DENIED");
+        // 1. Send Password -> Get OTP Request
+        async function startLogin() {
+            const u = document.getElementById("username").value;
+            const p = document.getElementById("password").value;
+            const btn = document.getElementById("btn-auth");
+            const msg = document.getElementById("msg");
+
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Checking...`;
+            btn.disabled = true;
+            msg.style.opacity = "0";
+
+            try {
+                const res = await fetch("api/admin/login.php", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                const data = await res.json();
+
+                if(data.status === "otp_required") {
+                    // Switch to OTP View
+                    document.getElementById("auth-form").style.display = "none";
+                    document.getElementById("otp-form").style.display = "block";
+                    document.getElementById("otp-code").focus();
+                } else {
+                    showError(data.message || "Access Denied");
+                    btn.innerHTML = `Verify Credentials <i class="fa-solid fa-arrow-right"></i>`;
+                    btn.disabled = false;
+                }
+            } catch(e) {
+                showError("Connection Error");
+                btn.disabled = false;
+            }
+        }
+
+        // 2. Send OTP -> Login
+        async function verifyCode() {
+            const otp = document.getElementById("otp-code").value;
+            const btn = document.getElementById("btn-otp");
+
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Unlocking...`;
+            btn.disabled = true;
+
+            try {
+                const res = await fetch("api/admin/verify_otp.php", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ otp: otp })
+                });
+                const data = await res.json();
+
+                if(data.status === "success") {
+                    window.location.href = "admin-panel.html";
+                } else {
+                    showError(data.message || "Invalid OTP");
+                    btn.innerHTML = `Unlock System <i class="fa-solid fa-lock-open"></i>`;
+                    btn.disabled = false;
+                }
+            } catch(e) { showError("Error verifying OTP"); }
+        }
+
+        function showError(text) {
+            const msg = document.getElementById("msg");
+            msg.innerText = "❌ " + text;
+            msg.style.opacity = "1";
         }
     </script>
 </body>

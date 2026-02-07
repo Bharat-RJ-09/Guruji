@@ -3,80 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Settings | NextEdu</title>
+    <title>My Identity | NextEdu</title>
+    
     <link rel="stylesheet" href="assets/css/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .profile-container { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; }
-        .profile-card {
-            background: var(--card-glass); border: 1px solid var(--border-glass);
-            padding: 35px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .section-header { margin-bottom: 25px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; }
-        .section-header h3 { margin: 0; font-size: 1.2rem; font-weight: 600; color: #fff; }
-        .section-header i { color: var(--neon-blue); }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .form-group { margin-bottom: 5px; }
-        .form-group label { display: block; color: var(--text-grey); margin-bottom: 8px; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-inp {
-            width: 100%; padding: 14px; background: rgba(0,0,0,0.3);
-            border: 1px solid var(--border-glass); color: #fff; border-radius: 10px; outline: none;
-            font-family: 'Poppins', sans-serif; transition: 0.3s;
-        }
-        .form-inp:focus { border-color: var(--neon-blue); background: rgba(0,0,0,0.5); }
-        .form-inp:disabled { opacity: 0.6; cursor: not-allowed; background: rgba(255,255,255,0.02); }
-
-        .btn-save {
-            background: var(--neon-blue); color: #000; padding: 14px; border: none;
-            border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 20px;
-            transition: 0.3s;
-        }
-        .btn-save:hover { box-shadow: 0 0 15px rgba(0, 255, 225, 0.4); }
-
-        /* Subscription Card - Premium Look */
-        .sub-card { text-align: center; position: relative; overflow: hidden; }
-        .sub-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
-            background: linear-gradient(90deg, #FFD700, #FFA500);
-        }
-        .plan-badge {
-            background: rgba(255, 215, 0, 0.15); color: #FFD700; padding: 6px 16px; 
-            border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-block; margin-bottom: 15px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-        }
-        .pro-features { text-align: left; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 15px; margin: 25px 0; }
-        .pro-features li { 
-            margin-bottom: 12px; color: #ddd; list-style: none; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; 
-        }
-        .pro-features i { color: #00ff88; font-size: 0.9rem; }
-        .locked i { color: #ff4444; }
-        .locked { color: #777 !important; }
-
-        @media (max-width: 900px) { .profile-container { grid-template-columns: 1fr; } }
-    </style>
+    <link rel="stylesheet" href="assets/css/profile.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
+    <div id="theme-bg" class="theme-background"></div>
 
     <aside class="sidebar" id="sidebar">
         <div class="brand">
             <i class="fa-solid fa-graduation-cap"></i> Next<span>Edu</span>
         </div>
-
         <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-        <a href="leaderboard.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
-        <a href="history.html" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
-        
         <a href="wallet.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Wallet</a>
-        <a href="subscription.html" class="nav-item" style="color: yellow;"><i class="fa-solid fa-crown"></i> Upgrade</a>
-        
-        <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user-gear"></i> Profile</a>
-
+        <a href="subscription.html" class="nav-item" style="color:#ffd700;"><i class="fa-solid fa-crown"></i> Upgrade</a>
+        <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user-astronaut"></i> Identity</a>
         <div style="margin-top: auto;">
-            <a href="#" onclick="logout()" class="nav-item" style="color: #ff4444;">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
-            </a>
-            <br> <br>
+             <a href="#" onclick="logout()" class="nav-item" style="color: #ff4444;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </aside>
 
@@ -86,89 +31,93 @@
         <header class="header">
             <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
             <div class="welcome">
-                <h1>Account Settings</h1>
-                <p>Manage your identity and security preferences.</p>
-            </div>
-            
-            <div class="user-profile">
-                <div class="avatar"><i class="fa-solid fa-user"></i></div>
-                <span id="userDisplay" style="font-size: 0.9rem;">Loading...</span>
+                <h1>👾 Player Identity</h1>
+                <p>Customize your avatar & track stats.</p>
             </div>
         </header>
 
-        <div class="profile-container">
-            
-            <div class="profile-card">
-                <div class="section-header">
-                    <i class="fa-solid fa-id-card"></i>
-                    <h3>Identity & Access</h3>
+        <div class="gamer-card">
+            <div class="avatar-section">
+                <div class="avatar-circle" onclick="openAvatarModal()">
+                    <img id="user-avatar-img" src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" alt="Avatar">
+                    <div class="edit-icon"><i class="fa-solid fa-pencil"></i></div>
                 </div>
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>User Handle</label>
-                        <input type="text" id="p_username" class="form-inp" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>Display Name</label>
-                        <input type="text" id="p_fullname" class="form-inp">
-                    </div>
+                <h2 id="user-fullname">Loading...</h2>
+                <p id="user-username">@username</p>
+                <div class="badge-container">
+                    <span class="badge-rank" id="lvl-badge">Rookie 🐣</span>
                 </div>
-
-                <div class="form-group" style="margin-top: 20px;">
-                    <label>Registered Email</label>
-                    <input type="text" id="p_email" class="form-inp" disabled> </div>
-                
-                <div class="form-group" style="margin-top: 20px;">
-                    <label>Member Since</label>
-                    <input type="text" id="p_joined" class="form-inp" disabled> </div>
-
-                <button class="btn-save" onclick="updateProfile()">Update Profile Details</button>
-
-                <div class="section-header" style="margin-top: 40px; border-top: 1px solid var(--border-glass); padding-top: 30px; border-bottom: none;">
-                    <i class="fa-solid fa-shield-halved" style="color: var(--neon-purple);"></i>
-                    <h3>Security Credentials</h3>
-                </div>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Current Password</label>
-                        <input type="password" id="curr_pass" class="form-inp" placeholder="••••••••">
-                    </div>
-                    <div class="form-group">
-                        <label>New Secure Password</label>
-                        <input type="password" id="new_pass" class="form-inp" placeholder="Min 6 characters">
-                    </div>
-                </div>
-                <button class="btn-save" style="background:var(--neon-purple); color:#fff;" onclick="changePassword()">Update Security Credentials</button>
             </div>
 
-            <!-- <div class="profile-card sub-card">
-                <span class="plan-badge">CURRENT PLAN</span>
-                <h2 id="plan_name" style="color:#fff; margin:10px 0; font-size: 2rem;">Standard Tier</h2>
-                <p style="color:var(--text-grey); font-size: 0.9rem;">Next Renewal: Lifetime Free</p>
+            <div class="level-section">
+                <div class="level-info">
+                    <span class="lvl-label">LEVEL <b id="lvl-num">1</b></span>
+                    <span class="xp-label"><span id="xp-val">0</span> / <span id="xp-max">200</span> XP</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="xp-bar" style="width: 0%;"></div>
+                </div>
+                <p class="next-reward">Next Level: <b>Scholar Badge 🎓</b></p>
+            </div>
+        </div>
 
-                <ul class="pro-features">
-                    <li><i class="fa-solid fa-circle-check"></i> Core Assessment Modules</li>
-                    <li><i class="fa-solid fa-circle-check"></i> Global Ranking Participation</li>
-                    <li class="locked"><i class="fa-solid fa-lock"></i> Advanced Performance Metrics</li>
-                    <li class="locked"><i class="fa-solid fa-lock"></i> Priority Support & Ad-Free</li>
-                    <li class="locked"><i class="fa-solid fa-lock"></i> AI-Powered Recommendations</li>
-                </ul>
+        <div class="settings-grid">
+            
+            <div class="setting-card">
+                <h3><i class="fa-solid fa-user-gear"></i> Edit Details</h3>
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="edit_fullname" placeholder="Enter Name">
+                </div>
+                <button class="btn-save" onclick="updateProfileName()">Save Name</button>
+            </div>
 
-                <button class="btn-save" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);" onclick="window.location.href='subscription.html'">
-                    <i class="fa-solid fa-crown"></i> Unlock Premium Access
+            <div class="setting-card telegram-card">
+                <div class="tg-header">
+                    <i class="fa-solid fa-headset"></i>
+                    <h3>Help & Support</h3>
+                </div>
+                <p>Facing issues? Chat with our support bot.</p>
+                <button class="btn-connect" onclick="openSupportBot()">
+                    <i class="fa-brands fa-telegram"></i> Chat with Support
                 </button>
-                <p style="margin-top:15px; font-size:0.8rem; color:#666;">Secure payment via Wallet</p>
-            </div> -->
+            </div>
+
+             <div class="setting-card">
+                <h3><i class="fa-solid fa-lock"></i> Security</h3>
+                <button class="btn-outline" onclick="location.href='forgot-password.html'">Change Password</button>
+            </div>
 
         </div>
     </main>
 
-    <script src="assets/js/dashboard.js"></script> 
+    <div class="modal-overlay" id="avatarModal">
+        <div class="modal-content">
+            <h3>Choose Your Avatar</h3>
+            <div class="avatar-grid">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" onclick="selectAvatar('av1')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140037.png" onclick="selectAvatar('av2')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140047.png" onclick="selectAvatar('av3')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140051.png" onclick="selectAvatar('av4')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/1999/1999625.png" onclick="selectAvatar('av5')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140055.png" onclick="selectAvatar('av6')" class="av-opt">
+                
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140040.png" onclick="selectAvatar('av7')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/6997/6997662.png" onclick="selectAvatar('av8')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140072.png" onclick="selectAvatar('av9')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140061.png" onclick="selectAvatar('av10')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140076.png" onclick="selectAvatar('av11')" class="av-opt">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140053.png" onclick="selectAvatar('av12')" class="av-opt">
+            </div>
+            <button class="btn-cancel" onclick="closeAvatarModal()">Close</button>
+        </div>
+    </div>
+
+    <script src="assets/js/dashboard.js"></script>
     <script src="assets/js/profile.js"></script>
     <script>
         function toggleSidebar() { document.getElementById("sidebar").classList.toggle("active"); }
+        function logout() { if(confirm("Logout?")) window.location.href='api/auth/logout.php'; }
     </script>
 </body>
 </html>
